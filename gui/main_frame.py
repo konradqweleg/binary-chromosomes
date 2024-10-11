@@ -4,7 +4,7 @@ from app.models.enums.cross_method import CrossMethod
 from app.models.enums.mutation_method import MutationMethod
 from app.models.enums.selection_method import SelectionMethod
 from app.models.binary_chromosomes_configuration_data import BinaryChromosomesConfigurationData
-from app.gui.input_validations.input_validations import InputValidations
+from gui.input_validations.input_validations import InputValidations
 
 
 class MainFrame:
@@ -122,3 +122,5 @@ class MainFrame:
 
     def start(self):
         self.initialization_frame()
+
+
