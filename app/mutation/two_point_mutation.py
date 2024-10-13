@@ -14,7 +14,7 @@ class TwoPointMutation(MutationMethod):
         for chromosome in chromosomes_to_mutate:
             if random.random() < self.probability_to_mutate:
                 # Mutate two random genes in each sublist
-                mutated_genes = [sublist[:] for sublist in chromosome.chromosomes]
+                mutated_genes = [sublist[:] for sublist in chromosome.chromosome_data]
                 for sublist in mutated_genes:
                     if len(sublist) > 1:
                         point1, point2 = sorted(random.sample(range(len(sublist)), 2))

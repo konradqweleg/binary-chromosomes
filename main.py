@@ -1,16 +1,21 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from app.bit_length_calculator import BitLengthMatchToPrecision
+from app.population import Population
+from app.selection.best_selection import BestSelection
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def fitness_function(variables):
+    return sum([x * x + 5 for x in variables])
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+lower_bounds = -10
+upper_bounds = 10
+precision = 0.000001
+population_size = 5
+num_variables = 1
+
+bit_length_calculator = BitLengthMatchToPrecision(precision, lower_bounds, upper_bounds, num_variables)
+population = Population(bit_length_calculator, population_size, lower_bounds, upper_bounds, num_variables)
+        
+        
+selecttion_algorithm = BestSelection(0.4)
+selected_chromosomes = selecttion_algorithm.select(population.get_chromosomes(), population.evaluate(fitness_function))
+print(str(selected_chromosomes[0]))

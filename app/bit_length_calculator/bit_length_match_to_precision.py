@@ -3,17 +3,11 @@ from app.bit_length_calculator import BitLengthCalculator
 
 
 class BitLengthMatchToPrecision(BitLengthCalculator):
-    def __init__(self):
-        self.precision = None
-        self.lower_bound = None
-        self.upper_bound = None
-
-    def set_precision(self, precision):
+    def __init__(self, precision, lower_bound, upper_bound, num_variables):
         self.precision = precision
-
-    def set_bounds(self, lower_bound, upper_bound):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
+        self.num_variables = num_variables
 
     def calculate_bit_length(self):
         if self.precision is None:
@@ -29,4 +23,5 @@ class BitLengthMatchToPrecision(BitLengthCalculator):
 
         bit_length = math.ceil(math.log2(required_values))
 
-        return bit_length
+        bit_length_for_all_variables = bit_length * self.num_variables
+        return bit_length_for_all_variables

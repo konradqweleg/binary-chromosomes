@@ -14,11 +14,11 @@ class ThreePointCrossover(CrossoverMethod):
         for i in range(0, len(chromosomes_to_crossover), 2):
             parent1, parent2 = chromosomes_to_crossover[i], chromosomes_to_crossover[i + 1]
             if random.random() < self.probability_to_crossover:
-                points = sorted(random.sample(range(1, len(parent1.chromosomes)), 3))
-                child1_genes = (parent1.chromosomes[:points[0]] + parent2.chromosomes[points[0]:points[1]] +
-                                parent1.chromosomes[points[1]:points[2]] + parent2.chromosomes[points[2]:])
-                child2_genes = (parent2.chromosomes[:points[0]] + parent1.chromosomes[points[0]:points[1]] +
-                                parent2.chromosomes[points[1]:points[2]] + parent1.chromosomes[points[2]:])
+                points = sorted(random.sample(range(1, len(parent1.chromosome_data)), 3))
+                child1_genes = (parent1.chromosome_data[:points[0]] + parent2.chromosome_data[points[0]:points[1]] +
+                                parent1.chromosome_data[points[1]:points[2]] + parent2.chromosome_data[points[2]:])
+                child2_genes = (parent2.chromosome_data[:points[0]] + parent1.chromosome_data[points[0]:points[1]] +
+                                parent2.chromosome_data[points[1]:points[2]] + parent1.chromosome_data[points[2]:])
 
                 new_child_1_chromosomes = BinaryChromosome.copy_with_new_chromosomes(parent1, child1_genes)
                 new_child_2_chromosomes = BinaryChromosome.copy_with_new_chromosomes(parent2, child2_genes)

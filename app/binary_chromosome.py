@@ -1,49 +1,35 @@
+import math
 import random
-from app.bit_length_calculator.bit_length_match_to_precision import BitLengthMatchToPrecision
-
-
-def _calculate_max_values_for_variables(bit_lengths):
-    """
-    Oblicza maksymalne wartości dla każdej zmiennej.
-    """
-    return [(2 ** bit_len) - 1 for bit_len in bit_lengths]
-
 
 class BinaryChromosome:
 
-    def __init__(self, bit_length_calculator, lower_bounds, upper_bounds, precision, num_variables, chromosomes=None):
+    def __init__(self, bit_length_calculator, lower_bounds, upper_bounds, num_variables, chromosomes=None):
         """
-        Inicjalizacja chromosomu binarnego dla wielu zmiennych.
-        bit_length_calculator: obiekt obliczający minimalną liczbę bitów dla danej precyzji
-        lower_bounds: lista dolnych granic dla każdej zmiennej
-        upper_bounds: lista górnych granic dla każdej zmiennej
-        precision: pożądana precyzja (taka sama dla wszystkich zmiennych)
-        num_variables: określa ilu zmiennych jest funkcja
-        chromosomes: opcjonalnie, lista chromosomów do skopiowania
+        Inicjalizacja chromosomu dla wielu zmiennych.
+        bit_length_calculator: metoda obliczania długości bitowej chromosomu
+        lower_bounds: dolna granica dla każdej zmiennej
+        upper_bounds: górna granica dla każdej zmiennej
+        num_variables: liczba zmiennych
+
         """
         self.lower_bounds = lower_bounds
         self.upper_bounds = upper_bounds
-        self.precision = precision
         self.num_variables = num_variables
-        self.bit_length_calculator = bit_length_calculator
+        self.chromosome_length_calculator = bit_length_calculator
 
-        self.bit_lengths = [self._calculate_bit_length(lb, ub, self.precision) for lb, ub in zip(lower_bounds, upper_bounds)]
-        self.max_values = _calculate_max_values_for_variables(self.bit_lengths)
+        self.bit_length = self._calculate_bit_length()
+        self.max_values = self._calculate_max_values_for_variable(self.bit_length)
 
         if chromosomes is None:
-            self.chromosomes = [self._random_chromosome(bit_len) for bit_len in self.bit_lengths]
+            self.chromosome_data = self._random_chromosome(self.bit_length)
         else:
-            self.chromosomes = chromosomes
+            self.chromosome_data = chromosomes
 
-    def _calculate_bit_length(self, lower_bound, upper_bound, precision):
+    def _calculate_bit_length(self):
         """
-        Oblicza minimalną liczbę bitów wymaganą do osiągnięcia danej precyzji dla jednej zmiennej.
+        Oblicza minimalną liczbę bitów wymaganą do osiągnięcia danej precyzji dla wszystkich zmiennych.
         """
-        bits_calculator = BitLengthMatchToPrecision()
-        bits_calculator.set_precision(precision)
-        bits_calculator.set_bounds(lower_bound, upper_bound)
-
-        return bits_calculator.calculate_bit_length()
+        return self.chromosome_length_calculator.calculate_bit_length()
 
     def _random_chromosome(self, bit_length):
         """
@@ -51,18 +37,26 @@ class BinaryChromosome:
         """
         return [random.choice([0, 1]) for _ in range(bit_length)]
 
+    def _calculate_max_values_for_variable(self, bit_length):
+        """
+        Oblicza maksymalne wartości dla pojedynczej zmiennej.
+        """
+        return (2 ** (bit_length / self.num_variables)) - 1
+
     def decode(self):
         """
         Przekształca chromosom binarny na zestaw wartości rzeczywistych (dla każdej zmiennej).
         """
         real_values = []
         for i in range(self.num_variables):
+            start_index = i * self.bit_length // self.num_variables
+            end_index = (i + 1) * self.bit_length // self.num_variables
 
-            binary_str = ''.join(str(bit) for bit in self.chromosomes[i])
+            binary_str = ''.join(str(bit) for bit in self.chromosome_data[start_index:end_index])
             decimal_value = int(binary_str, 2)
 
-            real_value = self.lower_bounds[i] + (decimal_value / self.max_values[i]) * (
-                    self.upper_bounds[i] - self.lower_bounds[i])
+            real_value = self.lower_bounds + (decimal_value) * (
+                    self.upper_bounds - self.lower_bounds)/ math.pow(2, self.bit_length // self.num_variables)
 
             real_values.append(real_value)
 
@@ -76,31 +70,35 @@ class BinaryChromosome:
             real_value = real_values[i]
 
             decimal_value = int(
-                ((real_value - self.lower_bounds[i]) / (self.upper_bounds[i] - self.lower_bounds[i])) * self.max_values[
-                    i])
+                ((real_value - self.lower_bounds) / (self.upper_bounds - self.lower_bounds)) * self.max_values
+            )
 
-            binary_str = format(decimal_value, f'0{self.bit_lengths[i]}b')
-            self.chromosomes[i] = [int(bit) for bit in binary_str]
+            binary_str = format(decimal_value, f'0{self.bit_length // self.num_variables}b')
+            start_index = i * self.bit_length // self.num_variables
+            end_index = (i + 1) * self.bit_length // self.num_variables
 
-    def mutate(self, mutation_rate):
-        """
-        Mutacja chromosomu z podanym prawdopodobieństwem mutacji (mutation_rate).
-        """
-        for i in range(self.num_variables):
-            for j in range(self.bit_lengths[i]):
-                if random.random() < mutation_rate:
-                    # Inwersja bitu
-                    self.chromosomes[i][j] = 1 - self.chromosomes[i][j]
+            self.chromosome_data[start_index:end_index] = [int(bit) for bit in binary_str]
+
+    # def mutate(self, mutation_rate):
+    #     """
+    #     Mutacja chromosomu z podanym prawdopodobieństwem mutacji (mutation_rate).
+    #     """
+    #     for i in range(self.num_variables):
+    #         for j in range(self.bit_length[i]):
+    #             if random.random() < mutation_rate:
+    #                 # Inwersja bitu
+    #                 self.chromosome_data[i][j] = 1 - self.chromosome_data[i][j]
 
     def __str__(self):
         """
-        Reprezentacja chromosomu jako ciąg bitów (dla każdej zmiennej).
+        Reprezentacja chromosomu jako ciągu bitów
         """
-        return ' | '.join(''.join(map(str, chromosome)) for chromosome in self.chromosomes)
+        return "Chromosom: " + str(self.chromosome_data) + ", zakodowana wartość: " + str(self.decode())
 
     @classmethod
-    def copy_with_new_chromosomes(cls, other, new_chromosomes):
+    def copy_with_new_chromosomes(cls, other, new_chromosom_data):
         """
-        Tworzy kopię chromosomu z nowymi wartościami w chromosomes.
+        Tworzy kopię danych konfiguracyjnych chromosomu z nową wartośćią bitową chromosomu.
         """
-        return cls(other.bit_length_calculator, other.lower_bounds, other.upper_bounds, other.precision, other.num_variables, new_chromosomes)
+        return cls(other.chromosome_length_calculator, other.lower_bounds, other.upper_bounds, other.num_variables,
+                   new_chromosom_data)

@@ -14,7 +14,7 @@ class OnePointMutation(MutationMethod):
         for chromosome in chromosomes_to_mutate:
             if random.random() < self.probability_to_mutate:
                 # Mutate one random gene in each sublist
-                mutated_genes = [sublist[:] for sublist in chromosome.chromosomes]
+                mutated_genes = [sublist[:] for sublist in chromosome.chromosome_data]
                 for sublist in mutated_genes:
                     if sublist:
                         point = random.randint(0, len(sublist) - 1)

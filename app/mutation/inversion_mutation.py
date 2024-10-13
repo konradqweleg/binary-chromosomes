@@ -13,7 +13,7 @@ class InversionMutation(MutationMethod):
         for chromosome in chromosomes_to_mutate:
             if random.random() < self.probability_to_mutate:
                 # Perform inversion mutation on each sublist
-                mutated_genes = [sublist[:] for sublist in chromosome.chromosomes]
+                mutated_genes = [sublist[:] for sublist in chromosome.chromosome_data]
                 for sublist in mutated_genes:
                     if len(sublist) > 1:
                         start, end = sorted(random.sample(range(len(sublist)), 2))

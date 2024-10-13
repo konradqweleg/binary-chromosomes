@@ -17,13 +17,13 @@ class GranularCrossover(CrossoverMethod):
             if random.random() < self.probability_to_crossover:
                 child1_genes = []
                 child2_genes = []
-                for j in range(0, len(parent1.chromosomes), self.granularity):
+                for j in range(0, len(parent1.chromosome_data), self.granularity):
                     if random.random() < 0.5:
-                        child1_genes.extend(parent1.chromosomes[j:j + self.granularity])
-                        child2_genes.extend(parent2.chromosomes[j:j + self.granularity])
+                        child1_genes.extend(parent1.chromosome_data[j:j + self.granularity])
+                        child2_genes.extend(parent2.chromosome_data[j:j + self.granularity])
                     else:
-                        child1_genes.extend(parent2.chromosomes[j:j + self.granularity])
-                        child2_genes.extend(parent1.chromosomes[j:j + self.granularity])
+                        child1_genes.extend(parent2.chromosome_data[j:j + self.granularity])
+                        child2_genes.extend(parent1.chromosome_data[j:j + self.granularity])
 
                 new_child_1_chromosomes = BinaryChromosome.copy_with_new_chromosomes(parent1, child1_genes)
                 new_child_2_chromosomes = BinaryChromosome.copy_with_new_chromosomes(parent2, child2_genes)

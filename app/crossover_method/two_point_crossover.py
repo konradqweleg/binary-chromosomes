@@ -14,9 +14,9 @@ class TwoPointCrossover(CrossoverMethod):
         for i in range(0, len(chromosomes_to_crossover), 2):
             parent1, parent2 = chromosomes_to_crossover[i], chromosomes_to_crossover[i + 1]
             if random.random() < self.probability_to_crossover:
-                point1, point2 = sorted(random.sample(range(1, len(parent1.chromosomes)), 2))
-                child1_genes = parent1.chromosomes[:point1] + parent2.chromosomes[point1:point2] + parent1.chromosomes[point2:]
-                child2_genes = parent2.chromosomes[:point1] + parent1.chromosomes[point1:point2] + parent2.chromosomes[point2:]
+                point1, point2 = sorted(random.sample(range(1, len(parent1.chromosome_data)), 2))
+                child1_genes = parent1.chromosome_data[:point1] + parent2.chromosome_data[point1:point2] + parent1.chromosome_data[point2:]
+                child2_genes = parent2.chromosome_data[:point1] + parent1.chromosome_data[point1:point2] + parent2.chromosome_data[point2:]
 
                 new_child_1_chromosomes = BinaryChromosome.copy_with_new_chromosomes(parent1, child1_genes)
                 new_child_2_chromosomes = BinaryChromosome.copy_with_new_chromosomes(parent2, child2_genes)

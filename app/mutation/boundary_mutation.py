@@ -15,7 +15,7 @@ class BoundaryMutation(MutationMethod):
         for chromosome in chromosomes_to_mutate:
             if random.random() < self.probability_to_mutate:
                 # Mutate the first and last gene of each sublist
-                mutated_genes = [sublist[:] for sublist in chromosome.chromosomes]
+                mutated_genes = [sublist[:] for sublist in chromosome.chromosome_data]
                 for sublist in mutated_genes:
                     if sublist:
                         sublist[0] = 1 - sublist[0]  # Assuming binary genes
