@@ -41,7 +41,8 @@ class GeneticAlgorithm:
         return self.selection_method.select(self.population.get_chromosomes(), fitness_scores)
 
     def crossover(self, chromosomes_to_crossover):
-        return self.crossover_method.crossover(chromosomes_to_crossover,self.population_size)
+        population_size_minus_elites = self.population_size - int(self.elitism_rate * self.population_size)
+        return self.crossover_method.crossover(chromosomes_to_crossover,population_size_minus_elites)
 
     def mutate(self, chromosomes_to_mutate):
         return self.mutation_method.mutate(chromosomes_to_mutate)
@@ -74,7 +75,7 @@ class GeneticAlgorithm:
 
             self.update_best_chromosome(fitness_scores)
 
-          #  new_population = self.handle_elites(fitness_scores)
+            elites = self.handle_elites(fitness_scores)
 
             chromosomes_to_crossover = self.select(fitness_scores)
 
@@ -84,7 +85,7 @@ class GeneticAlgorithm:
 
             mutated_chromosomes = self.mutate(self.population.get_chromosomes())
             self.population._chromosomes = mutated_chromosomes
-
+            self.population._chromosomes.extend(elites)
             #new_population.extend(self.population._chromosomes[:self.population_size - len(new_population)])
             #self.population._chromosomes = new_population
 
@@ -99,19 +100,23 @@ class GeneticAlgorithm:
 
 
 if __name__ == '__main__':
-    lower_bounds = -10
-    upper_bounds = 10
+    lower_bounds = 0
+    upper_bounds = 31
     precision = 0.000001
-    population_size = 10
-    num_iterations = 100
+    population_size = 20
+    num_iterations = 20
     selection_method = BestSelection(0.20)
     crossover_method = OnePointCrossover(
         0.99)
     tournament_size = 3
 
 
+
     def fitness_function(variables):
-        return sum([x * x + 5 for x in variables])
+        #return variables[0] * variables[0] + 5
+        #return sum([x * x + 5 for x in variables]) # To i to wyżej to to samo
+        #return variables[0] * variables[0] * variables[0] - 24 * variables[1] * variables[1] + 180 *variables[2]
+        return (variables[0] * variables[0] * variables[0]) - (24 * variables[0]* variables[0]) - (180 *variables[0])
 
 
     chromosome_length_calculator = BitLengthMatchToPrecision(precision, lower_bounds, upper_bounds, 1)
@@ -120,3 +125,5 @@ if __name__ == '__main__':
                           selection_method,
                           crossover_method, OnePointMutation(0.01), 1, 0.1, fitness_function)
     ga.run()
+
+
