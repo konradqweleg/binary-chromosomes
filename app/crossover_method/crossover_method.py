@@ -5,13 +5,12 @@ class CrossoverMethod(ABC):
     @abstractmethod
     def crossover(self, chromosome_to_crossover, expected_new_population_size):
         """
-                Wykonuje krzyżowanie między chromosomami.
+                Performs crossover between chromosomes.
 
-                Parametry:
-                chromosome_to_crossover (list): Lista chromosomów do skrzyżowania.
-
-
-                Zwraca:
-                list: skrzyzowane elementy
+                Parameters:
+                chromosome_to_crossover (list): List of chromosomes to crossover.
+                expected_new_population_size (int): Expected size of the new population.
+                Returns:
+                list: Crossed-over elements
         """
         pass

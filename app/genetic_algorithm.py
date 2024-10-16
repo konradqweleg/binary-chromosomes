@@ -1,8 +1,13 @@
+import math
 import random
 import copy
 
 from app.bit_length_calculator import BitLengthMatchToPrecision
+from app.crossover_method.granular_crossover import GranularCrossover
 from app.crossover_method.one_point_crossover import OnePointCrossover
+from app.crossover_method.three_point_crossover import ThreePointCrossover
+from app.crossover_method.two_point_crossover import TwoPointCrossover
+from app.crossover_method.uniform_crossover import UniformCrossover
 from app.mutation.boundary_mutation import BoundaryMutation
 from app.mutation.one_point_mutation import OnePointMutation
 from app.population import Population
@@ -32,7 +37,7 @@ class GeneticAlgorithm:
 
         self.the_best_chromosome_last_population = None
         self.the_best_fitness_last_population = float('inf')
-        random.seed(42)
+      #  random.seed(42)
 
     def fitness_function(self, variables):
         return self.fitness_function(variables)
@@ -42,7 +47,7 @@ class GeneticAlgorithm:
 
     def crossover(self, chromosomes_to_crossover):
         population_size_minus_elites = self.population_size - int(self.elitism_rate * self.population_size)
-        return self.crossover_method.crossover(chromosomes_to_crossover,population_size_minus_elites)
+        return self.crossover_method.crossover(chromosomes_to_crossover, population_size_minus_elites)
 
     def mutate(self, chromosomes_to_mutate):
         return self.mutation_method.mutate(chromosomes_to_mutate)
@@ -100,14 +105,13 @@ class GeneticAlgorithm:
 
 
 if __name__ == '__main__':
-    lower_bounds = 0
-    upper_bounds = 31
+    lower_bounds = -500.0
+    upper_bounds = 500.0
     precision = 0.000001
     population_size = 20
-    num_iterations = 20
+    num_iterations = 2000
     selection_method = BestSelection(0.20)
-    crossover_method = OnePointCrossover(
-        0.99)
+
     tournament_size = 3
 
 
@@ -119,11 +123,39 @@ if __name__ == '__main__':
         return (variables[0] * variables[0] * variables[0]) - (24 * variables[0]* variables[0]) - (180 *variables[0])
 
 
-    chromosome_length_calculator = BitLengthMatchToPrecision(precision, lower_bounds, upper_bounds, 1)
+    def fitness_function_szwefel(variables):
+
+        # Global Minimum:
+        # Function Value: 2.545567497236334e-5
+        # Coordinates: [420.9687, 420.9687]
+        # This means that the global minimum of the Schwefel function is achieved at the point (420.9687, 420.9687)
+        # with a function value close to zero, which is the theoretical minimum of the function.
+
+        # Local Minimum:
+        # Function Value: 118.43836006957031
+        # Coordinates: [-302.5249351839932, 420.9687467475071]
+
+        n = len(variables)  # Liczba wymiarów
+        sum_term = 0.0
+
+        for x in variables:
+            sum_term += x * math.sin(math.sqrt(abs(x)))
+
+        return 418.9829 * n - sum_term
+
+    chromosome_length_calculator = BitLengthMatchToPrecision(precision, lower_bounds, upper_bounds, 3)
+
+    crossover_method = OnePointCrossover(0.99)
+    crossover_method = TwoPointCrossover(0.99)
+    crossover_method = ThreePointCrossover(0.99)
+    crossover_method = GranularCrossover(0.99, 2, 0.5)
+    crossover_method = UniformCrossover(0.99, 0.5)
+
 
     ga = GeneticAlgorithm(chromosome_length_calculator, population_size, lower_bounds, upper_bounds, num_iterations,
                           selection_method,
-                          crossover_method, OnePointMutation(0.01), 1, 0.1, fitness_function)
+                          crossover_method, OnePointMutation(0.01), 3, 0.1, fitness_function_szwefel)
     ga.run()
 
 
+#print(fitness_function_szwefel([118.43]))

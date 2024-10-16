@@ -124,3 +124,5 @@ class MainFrame:
         self.initialization_frame()
 
 
+fra = MainFrame()
+fra.start()
