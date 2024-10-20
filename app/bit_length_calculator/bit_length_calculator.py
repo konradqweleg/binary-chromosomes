@@ -3,12 +3,13 @@ from abc import abstractmethod, ABC
 
 class BitLengthCalculator(ABC):
     """
-    Interfejs dla kalkulatora długości bitów.
+    Interface for bit length calculator.
     """
+
     @abstractmethod
     def calculate_bit_length(self):
         """
-        Oblicza minimalną liczbę bitów wymaganą do osiągnięcia danej precyzji dla jednej zmiennej.
-        :return: Liczba bitów wymagana do reprezentacji wartości.
+        Calculates the minimum number of bits required to achieve a given precision for a single variable.
+        :return: Number of bits required to represent the value.
         """
         pass

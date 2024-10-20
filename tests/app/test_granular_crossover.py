@@ -12,7 +12,8 @@ class TestGranularCrossover(unittest.TestCase):
         self.probability_to_crossover = 0.7
         self.block_size = 2
         self.probability_to_crossover_block = 0.5
-        self.crossover = GranularCrossover(self.probability_to_crossover, self.block_size, self.probability_to_crossover_block)
+        self.crossover = GranularCrossover(self.probability_to_crossover, self.block_size,
+                                           self.probability_to_crossover_block)
 
         self.lower_bounds = 0
         self.upper_bounds = 1
@@ -26,7 +27,6 @@ class TestGranularCrossover(unittest.TestCase):
         ]
         self.expected_new_population_size = 4
 
-
     def test_crossover_expected_size(self):
         new_chromosomes = self.crossover.crossover(self.chromosomes_to_crossover, self.expected_new_population_size)
 
@@ -35,7 +35,6 @@ class TestGranularCrossover(unittest.TestCase):
         self.assertIsInstance(new_chromosomes[1], BinaryChromosome)
         self.assertIsInstance(new_chromosomes[2], BinaryChromosome)
         self.assertIsInstance(new_chromosomes[3], BinaryChromosome)
-
 
     def test_crossover(self):
         random.seed(42)

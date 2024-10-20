@@ -220,7 +220,7 @@ class MainFrame:
         binary_chromosomes_configuration_data.optimization_type = self.optimization_type
         binary_chromosomes_configuration_data.function_to_calculate = self.function_to_calculate_selected_option
         binary_chromosomes_configuration_data.percentage_the_best_to_select = self.percentage_the_best_to_select_entry.get()
-        binary_chromosomes_configuration_data.roulette_wheel_selection_percentage_chromosomes_to_select = self
+        binary_chromosomes_configuration_data.roulette_wheel_selection_percentage_chromosomes_to_select =
         binary_chromosomes_configuration_data.block_size = self.block_size_entry.get()
         binary_chromosomes_configuration_data.probability_to_crossover_block = self.probability_to_crossover_block_entry.get()
         binary_chromosomes_configuration_data.tournament_size = self.tournament_size_entry.get()

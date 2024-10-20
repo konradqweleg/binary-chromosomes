@@ -4,6 +4,7 @@ from app.binary_chromosome import BinaryChromosome
 from app.bit_length_calculator import BitLengthMatchToPrecision
 from app.selection.roulette_wheel_selection import RouletteWheelSelection
 
+
 class TestRouletteWheelSelection(unittest.TestCase):
     def setUp(self):
         self.percentage_to_select = 0.5
@@ -11,14 +12,14 @@ class TestRouletteWheelSelection(unittest.TestCase):
         self.upper_bounds = 1
         self.precision = 0.1
         self.bit_length_calculator = BitLengthMatchToPrecision(self.precision, self.lower_bounds, self.upper_bounds, 1)
-        self.selection_method = RouletteWheelSelection(self.percentage_to_select,optimization_type="maximization" )#optimization_type="minimization" optimization_type="maximization"
+        self.selection_method = RouletteWheelSelection(self.percentage_to_select,
+                                                       optimization_type="maximization")  # optimization_type="minimization" optimization_type="maximization"
         self.chromosomes = [
             BinaryChromosome(self.bit_length_calculator, self.lower_bounds, self.upper_bounds, 1, [1, 1, 0, 1, 1, 1]),
             BinaryChromosome(self.bit_length_calculator, self.lower_bounds, self.upper_bounds, 1, [1, 1, 1, 0, 0, 0]),
             BinaryChromosome(self.bit_length_calculator, self.lower_bounds, self.upper_bounds, 1, [0, 1, 0, 1, 1, 1]),
             BinaryChromosome(self.bit_length_calculator, self.lower_bounds, self.upper_bounds, 1, [1, 1, 1, 0, 1, 0]),
         ]
-
 
     def test_selection_expected_size(self):
         fitness_scores = [-1, 5, -3, -4]
@@ -41,11 +42,6 @@ class TestRouletteWheelSelection(unittest.TestCase):
                 index = self.chromosomes.index(chromosome)
                 selection_counts[index] += 1
 
-        print("Selection counts: ", selection_counts)
-        print("Counts with chromosome 1 info: ", selection_counts[0],str(self.chromosomes[0]))
-        print("Counts with chromosome 2 info: ", selection_counts[1],str(self.chromosomes[1]))
-        print("Counts with chromosome 3 info: ", selection_counts[2],str(self.chromosomes[2]))
-        print("Counts with chromosome 4 info: ", selection_counts[3],str(self.chromosomes[3]))
         self.assertGreater(selection_counts[2], selection_counts[0])
         self.assertGreater(selection_counts[3], selection_counts[0])
         self.assertGreater(selection_counts[2], selection_counts[1])
@@ -62,11 +58,6 @@ class TestRouletteWheelSelection(unittest.TestCase):
                 index = self.chromosomes.index(chromosome)
                 selection_counts[index] += 1
 
-        print("Selection counts: ", selection_counts)
-        print("Counts with chromosome 1 info: ", selection_counts[0],str(self.chromosomes[0]))
-        print("Counts with chromosome 2 info: ", selection_counts[1],str(self.chromosomes[1]))
-        print("Counts with chromosome 3 info: ", selection_counts[2],str(self.chromosomes[2]))
-        print("Counts with chromosome 4 info: ", selection_counts[3],str(self.chromosomes[3]))
         self.assertGreater(selection_counts[0], selection_counts[1])
         self.assertGreater(selection_counts[2], selection_counts[1])
         self.assertGreater(selection_counts[0], selection_counts[3])

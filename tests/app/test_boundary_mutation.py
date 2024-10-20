@@ -5,6 +5,7 @@ from app.binary_chromosome import BinaryChromosome
 from app.bit_length_calculator import BitLengthMatchToPrecision
 from app.mutation.boundary_mutation import BoundaryMutation
 
+
 class TestBoundaryMutation(unittest.TestCase):
 
     def setUp(self):
@@ -32,19 +33,19 @@ class TestBoundaryMutation(unittest.TestCase):
             bit_differences = sum(
                 1 for o_bit, m_bit in zip(original.chromosome_data, mutated.chromosome_data) if o_bit != m_bit)
 
-
             if bit_differences == 1:
 
                 if original.chromosome_data[0] != mutated.chromosome_data[0] or \
                         original.chromosome_data[-1] != mutated.chromosome_data[-1]:
                     mutated_count += 1
                 else:
-                    self.fail(f"Mutation occurred in a non-boundary gene: {original.chromosome_data} -> {mutated.chromosome_data}")
+                    self.fail(
+                        f"Mutation occurred in a non-boundary gene: {original.chromosome_data} -> {mutated.chromosome_data}")
             elif bit_differences == 0:
                 unchanged_count += 1
             else:
-                self.fail(f"More than 1 bit mutated in chromosome: {original.chromosome_data} -> {mutated.chromosome_data}")
-
+                self.fail(
+                    f"More than 1 bit mutated in chromosome: {original.chromosome_data} -> {mutated.chromosome_data}")
 
         self.assertAlmostEqual(mutated_count / 1000, 0.5, delta=0.1)
         self.assertAlmostEqual(unchanged_count / 1000, 0.5, delta=0.1)

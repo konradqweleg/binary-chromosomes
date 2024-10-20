@@ -6,7 +6,6 @@ class BitLengthMatchToPrecisionTests(unittest.TestCase):
 
     def test_bit_length_for_range_minus_ten_to_ten_with_precision_ten_to_power_minus_six_should_require_twenty_five_bits_for_one_variable(
             self):
-
         bits_calculator = BitLengthMatchToPrecision(10 ** -6, -10, 10, 1)
         self.assertEqual(bits_calculator.calculate_bit_length(), 25)
 

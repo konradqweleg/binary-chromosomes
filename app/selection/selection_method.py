@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class SelectionMethod(ABC):
     @abstractmethod
     def select(self, population, fitness_scores):

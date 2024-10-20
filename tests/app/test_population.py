@@ -3,6 +3,7 @@ from app.binary_chromosome import BinaryChromosome
 from app.bit_length_calculator.bit_length_match_to_precision import BitLengthMatchToPrecision
 from app.population import Population
 
+
 class TestPopulation(unittest.TestCase):
 
     def setUp(self):
@@ -12,8 +13,10 @@ class TestPopulation(unittest.TestCase):
         self.population_size = 5
         self.num_variables = 1
 
-        self.bit_length_calculator = BitLengthMatchToPrecision(self.precision, self.lower_bounds, self.upper_bounds, self.num_variables)
-        self.population = Population(self.bit_length_calculator, self.population_size, self.lower_bounds, self.upper_bounds, self.num_variables)
+        self.bit_length_calculator = BitLengthMatchToPrecision(self.precision, self.lower_bounds, self.upper_bounds,
+                                                               self.num_variables)
+        self.population = Population(self.bit_length_calculator, self.population_size, self.lower_bounds,
+                                     self.upper_bounds, self.num_variables)
 
     def test_population_initialization(self):
         self.assertEqual(len(self.population.get_chromosomes()), self.population_size)
@@ -36,6 +39,7 @@ class TestPopulation(unittest.TestCase):
         population_str = str(self.population)
         self.assertTrue(isinstance(population_str, str))
         self.assertTrue(population_str.startswith("Chromosom:"))
+
 
 if __name__ == '__main__':
     unittest.main()

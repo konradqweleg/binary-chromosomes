@@ -4,14 +4,6 @@ import random
 class BinaryChromosome:
 
     def __init__(self, bit_length_calculator, lower_bounds, upper_bounds, num_variables, chromosomes=None):
-        """
-        Inicjalizacja chromosomu dla wielu zmiennych.
-        bit_length_calculator: metoda obliczania długości bitowej chromosomu
-        lower_bounds: dolna granica dla każdej zmiennej
-        upper_bounds: górna granica dla każdej zmiennej
-        num_variables: liczba zmiennych
-
-        """
         self.lower_bounds = lower_bounds
         self.upper_bounds = upper_bounds
         self.num_variables = num_variables
@@ -26,27 +18,15 @@ class BinaryChromosome:
             self.chromosome_data = chromosomes
 
     def _calculate_bit_length(self):
-        """
-        Oblicza minimalną liczbę bitów wymaganą do osiągnięcia danej precyzji dla wszystkich zmiennych.
-        """
         return self.chromosome_length_calculator.calculate_bit_length()
 
     def _random_chromosome(self, bit_length):
-        """
-        Generuje losowy chromosom (lista bitów) o zadanej długości bitowej.
-        """
         return [random.choice([0, 1]) for _ in range(bit_length)]
 
     def _calculate_max_values_for_variable(self, bit_length):
-        """
-        Oblicza maksymalne wartości dla pojedynczej zmiennej.
-        """
         return (2 ** (bit_length / self.num_variables)) - 1
 
     def decode(self):
-        """
-        Przekształca chromosom binarny na zestaw wartości rzeczywistych (dla każdej zmiennej).
-        """
         real_values = []
         for i in range(self.num_variables):
             start_index = i * self.bit_length // self.num_variables
@@ -63,9 +43,6 @@ class BinaryChromosome:
         return real_values
 
     def encode(self, real_values):
-        """
-        Koduje zestaw wartości rzeczywistych (dla każdej zmiennej) do postaci binarnej.
-        """
         for i in range(self.num_variables):
             real_value = real_values[i]
 
@@ -79,26 +56,10 @@ class BinaryChromosome:
 
             self.chromosome_data[start_index:end_index] = [int(bit) for bit in binary_str]
 
-    # def mutate(self, mutation_rate):
-    #     """
-    #     Mutacja chromosomu z podanym prawdopodobieństwem mutacji (mutation_rate).
-    #     """
-    #     for i in range(self.num_variables):
-    #         for j in range(self.bit_length[i]):
-    #             if random.random() < mutation_rate:
-    #                 # Inwersja bitu
-    #                 self.chromosome_data[i][j] = 1 - self.chromosome_data[i][j]
-
     def __str__(self):
-        """
-        Reprezentacja chromosomu jako ciągu bitów
-        """
         return "Chromosom: " + str(self.chromosome_data) + ", zakodowana wartość: " + str(self.decode())
 
     @classmethod
     def copy_with_new_chromosomes(cls, other, new_chromosom_data):
-        """
-        Tworzy kopię danych konfiguracyjnych chromosomu z nową wartośćią bitową chromosomu.
-        """
         return cls(other.chromosome_length_calculator, other.lower_bounds, other.upper_bounds, other.num_variables,
                    new_chromosom_data)

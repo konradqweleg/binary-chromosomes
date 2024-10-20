@@ -1,6 +1,5 @@
 import random
 import unittest
-from unittest.mock import patch
 from app.binary_chromosome import BinaryChromosome
 from app.bit_length_calculator import BitLengthMatchToPrecision
 from app.mutation.bit_flip_mutation import BitFlipMutation
@@ -27,8 +26,6 @@ class TestBitFlipMutation(unittest.TestCase):
         self.assertEqual(len(new_chromosomes), len(self.chromosomes))
         self.assertEqual(new_chromosomes[0].chromosome_data, [0, 0, 1, 0])
         self.assertEqual(new_chromosomes[1].chromosome_data, [1, 0, 1, 1])
-
-
 
 
 if __name__ == '__main__':

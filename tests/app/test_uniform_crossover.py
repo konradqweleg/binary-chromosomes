@@ -25,9 +25,9 @@ class TestUniformCrossover(unittest.TestCase):
         ]
         self.expected_new_population_size = 4
 
-
     def test_crossover_expected_size(self):
-        new_chromosomes = self.two_point_crossover.crossover(self.chromosomes_to_crossover, self.expected_new_population_size)
+        new_chromosomes = self.two_point_crossover.crossover(self.chromosomes_to_crossover,
+                                                             self.expected_new_population_size)
 
         self.assertEqual(len(new_chromosomes), self.expected_new_population_size)
         self.assertIsInstance(new_chromosomes[0], BinaryChromosome)
@@ -35,10 +35,10 @@ class TestUniformCrossover(unittest.TestCase):
         self.assertIsInstance(new_chromosomes[2], BinaryChromosome)
         self.assertIsInstance(new_chromosomes[3], BinaryChromosome)
 
-
     def test_crossover(self):
         random.seed(0)
-        new_chromosomes = self.two_point_crossover.crossover(self.chromosomes_to_crossover, self.expected_new_population_size)
+        new_chromosomes = self.two_point_crossover.crossover(self.chromosomes_to_crossover,
+                                                             self.expected_new_population_size)
 
         self.assertEqual(len(new_chromosomes), self.expected_new_population_size)
         self.assertEqual(new_chromosomes[0].chromosome_data, [1, 0, 0, 0])

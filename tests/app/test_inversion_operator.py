@@ -14,7 +14,6 @@ class TestInversionMutation(unittest.TestCase):
         self.precision = 0.1
         self.bit_length_calculator = BitLengthMatchToPrecision(self.precision, self.lower_bounds, self.upper_bounds, 1)
 
-
         self.chromosomes = [
             BinaryChromosome(self.bit_length_calculator, self.lower_bounds, self.upper_bounds, 1,
                              [random.randint(0, 1) for _ in range(100)])
@@ -34,17 +33,13 @@ class TestInversionMutation(unittest.TestCase):
             bit_differences = sum(
                 1 for o_bit, m_bit in zip(original.chromosome_data, mutated.chromosome_data) if o_bit != m_bit)
 
-
             if bit_differences > 0:
                 mutated_count += 1
                 original_part = original.chromosome_data
                 mutated_part = mutated.chromosome_data
-                print(f"original_part: {original_part}, mutated_part: {mutated_part}")
-
 
                 start = next(i for i in range(len(original_part)) if original_part[i] != mutated_part[i])
                 end = next(i for i in range(len(original_part) - 1, -1, -1) if original_part[i] != mutated_part[i])
-
 
                 original_segment = original_part[start:end + 1]
                 mutated_segment = mutated_part[start:end + 1]
@@ -56,10 +51,9 @@ class TestInversionMutation(unittest.TestCase):
             elif bit_differences == 0:
                 unchanged_count += 1
             else:
-                self.fail(f"Unexpected number of bits mutated: {bit_differences} in chromosome: {original.chromosome_data} -> {mutated.chromosome_data}")
+                self.fail(
+                    f"Unexpected number of bits mutated: {bit_differences} in chromosome: {original.chromosome_data} -> {mutated.chromosome_data}")
 
-
-        print(f"how_many_bit_differences: {how_many_bit_differences}")
         self.assertAlmostEqual(mutated_count / 1000, 0.5, delta=0.1)
         self.assertAlmostEqual(unchanged_count / 1000, 0.5, delta=0.1)
 
@@ -67,7 +61,6 @@ class TestInversionMutation(unittest.TestCase):
 
         no_mutation = InversionOperator(0.0)
         new_chromosomes = no_mutation.apply(self.chromosomes)
-
 
         for original, mutated in zip(self.chromosomes, new_chromosomes):
             self.assertEqual(original.chromosome_data, mutated.chromosome_data)
@@ -86,9 +79,7 @@ class TestInversionMutation(unittest.TestCase):
             if bit_differences > 0:
                 mutated_count += 1
 
-
         percentage_mutated = mutated_count / len(self.chromosomes)
-        print(f"percentage_mutated: {percentage_mutated}")
         self.assertGreaterEqual(percentage_mutated, 0.85,
                                 f"Only {percentage_mutated * 100:.2f}% of chromosomes were mutated.")
 

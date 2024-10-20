@@ -3,8 +3,10 @@ from app.bit_length_calculator import BitLengthMatchToPrecision
 from app.population import Population
 from app.selection.best_selection import BestSelection
 
+
 def fitness_function(variables):
     return sum([x * x + 5 for x in variables])
+
 
 class TestBestSelection(unittest.TestCase):
 
@@ -15,8 +17,10 @@ class TestBestSelection(unittest.TestCase):
         self.population_size = 5
         self.num_variables = 1
 
-        self.bit_length_calculator = BitLengthMatchToPrecision(self.precision, self.lower_bounds, self.upper_bounds, self.num_variables)
-        self.population = Population(self.bit_length_calculator, self.population_size, self.lower_bounds, self.upper_bounds, self.num_variables)
+        self.bit_length_calculator = BitLengthMatchToPrecision(self.precision, self.lower_bounds, self.upper_bounds,
+                                                               self.num_variables)
+        self.population = Population(self.bit_length_calculator, self.population_size, self.lower_bounds,
+                                     self.upper_bounds, self.num_variables)
         self.selection_algorithm = BestSelection(0.4)
 
     def test_select(self):
@@ -39,6 +43,7 @@ class TestBestSelection(unittest.TestCase):
 
         for best_chromosome in best_chromosomes:
             self.assertIn(best_chromosome, selected_chromosomes)
+
 
 if __name__ == '__main__':
     unittest.main()
