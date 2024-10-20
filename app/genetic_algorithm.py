@@ -9,7 +9,7 @@ from app.crossover_method.three_point_crossover import ThreePointCrossover
 from app.crossover_method.two_point_crossover import TwoPointCrossover
 from app.crossover_method.uniform_crossover import UniformCrossover
 from app.mutation.boundary_mutation import BoundaryMutation
-from app.mutation.one_point_mutation import OnePointMutation
+from app.mutation.bit_flip_mutation import BitFlipMutation
 from app.population import Population
 from app.selection.best_selection import BestSelection
 
@@ -154,7 +154,7 @@ if __name__ == '__main__':
 
     ga = GeneticAlgorithm(chromosome_length_calculator, population_size, lower_bounds, upper_bounds, num_iterations,
                           selection_method,
-                          crossover_method, OnePointMutation(0.01), 3, 0.1, fitness_function_szwefel)
+                          crossover_method, BitFlipMutation(0.01), 3, 0.1, fitness_function_szwefel)
     ga.run()
 
 

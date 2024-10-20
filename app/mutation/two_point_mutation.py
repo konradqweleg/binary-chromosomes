@@ -12,16 +12,19 @@ class TwoPointMutation(MutationMethod):
     def mutate(self, chromosomes_to_mutate):
         new_chromosomes = []
         for chromosome in chromosomes_to_mutate:
+            new_gens_for_chromosome = list(chromosome.chromosome_data)
+
             if random.random() < self.probability_to_mutate:
-                # Mutate two random genes in each sublist
-                mutated_genes = [sublist[:] for sublist in chromosome.chromosome_data]
-                for sublist in mutated_genes:
-                    if len(sublist) > 1:
-                        point1, point2 = sorted(random.sample(range(len(sublist)), 2))
-                        sublist[point1] = 1 - sublist[point1]  # Assuming binary genes
-                        sublist[point2] = 1 - sublist[point2]
-                new_chromosome = BinaryChromosome.copy_with_new_chromosomes(chromosome, mutated_genes)
-                new_chromosomes.append(new_chromosome)
-            else:
-                new_chromosomes.append(chromosome)
+
+                gene_to_mutate_1 = random.randint(0, len(new_gens_for_chromosome) - 1)
+                gene_to_mutate_2 = random.randint(0, len(new_gens_for_chromosome) - 1)
+
+                while gene_to_mutate_2 == gene_to_mutate_1:
+                    gene_to_mutate_2 = random.randint(0, len(new_gens_for_chromosome) - 1)
+
+                new_gens_for_chromosome[gene_to_mutate_1] = 1 if new_gens_for_chromosome[gene_to_mutate_1] == 0 else 0
+                new_gens_for_chromosome[gene_to_mutate_2] = 1 if new_gens_for_chromosome[gene_to_mutate_2] == 0 else 0
+
+            new_chromosomes.append(BinaryChromosome.copy_with_new_chromosomes(chromosome, new_gens_for_chromosome))
+
         return new_chromosomes

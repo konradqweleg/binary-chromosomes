@@ -1,6 +1,6 @@
 from app.bit_length_calculator import BitLengthMatchToPrecision
 from app.crossover_method.one_point_crossover import OnePointCrossover
-from app.mutation.one_point_mutation import OnePointMutation
+from app.mutation.bit_flip_mutation import BitFlipMutation
 from app.population import Population
 from app.selection.best_selection import BestSelection
 
@@ -25,7 +25,7 @@ population = Population(bit_length_calculator, population_size, lower_bounds, up
 # cross_algorithm = OnePointCrossover(0.5)
 # print(cross_algorithm.crossover(selected_chromosomes, population_size))
 
-mutation = OnePointMutation(0.1)
+mutation = BitFlipMutation(0.1)
 result = mutation.mutate(population.get_chromosomes())
 
 print(population.get_chromosomes()[0].chromosome_data)
