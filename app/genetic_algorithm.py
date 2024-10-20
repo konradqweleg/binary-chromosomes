@@ -10,6 +10,7 @@ from app.crossover_method.two_point_crossover import TwoPointCrossover
 from app.crossover_method.uniform_crossover import UniformCrossover
 from app.mutation.boundary_mutation import BoundaryMutation
 from app.mutation.bit_flip_mutation import BitFlipMutation
+from app.other_operations.inversion_operator import InversionOperator
 from app.population import Population
 from app.selection.best_selection import BestSelection
 
@@ -18,7 +19,7 @@ from app.selection.best_selection import BestSelection
 class GeneticAlgorithm:
     def __init__(self, length_chromosome_calculator, population_size, lower_bounds, upper_bounds, num_iterations,
                  selection_method,
-                 crossover_method, mutation_method, num_variables, elitism_rate, fittness_function=None):
+                 crossover_method, mutation_method, num_variables, elitism_rate, other_operation = None, fittness_function=None):
         self.population_size = population_size
         self.lower_bounds = lower_bounds
         self.upper_bounds = upper_bounds
@@ -37,6 +38,7 @@ class GeneticAlgorithm:
 
         self.the_best_chromosome_last_population = None
         self.the_best_fitness_last_population = float('inf')
+        self.other_operations = other_operation
       #  random.seed(42)
 
     def fitness_function(self, variables):
@@ -89,6 +91,10 @@ class GeneticAlgorithm:
             self.population._chromosomes = crossovered_chromosomes
 
             mutated_chromosomes = self.mutate(self.population.get_chromosomes())
+
+            if self.other_operations is not None:
+                mutated_chromosomes = self.other_operations.apply(mutated_chromosomes)
+
             self.population._chromosomes = mutated_chromosomes
             self.population._chromosomes.extend(elites)
             #new_population.extend(self.population._chromosomes[:self.population_size - len(new_population)])
@@ -109,7 +115,7 @@ if __name__ == '__main__':
     upper_bounds = 500.0
     precision = 0.000001
     population_size = 20
-    num_iterations = 2000
+    num_iterations = 100
     selection_method = BestSelection(0.20)
 
     tournament_size = 3
@@ -151,10 +157,12 @@ if __name__ == '__main__':
     crossover_method = GranularCrossover(0.99, 2, 0.5)
     crossover_method = UniformCrossover(0.99, 0.5)
 
+    inversion_action = InversionOperator(0.01)
+
 
     ga = GeneticAlgorithm(chromosome_length_calculator, population_size, lower_bounds, upper_bounds, num_iterations,
                           selection_method,
-                          crossover_method, BitFlipMutation(0.01), 3, 0.1, fitness_function_szwefel)
+                          crossover_method, BitFlipMutation(0.01), 3, 0.1,inversion_action, fitness_function_szwefel)
     ga.run()
 
 
