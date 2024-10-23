@@ -1,6 +1,8 @@
 import math
 import copy
 
+import numpy as np
+
 from app.bit_length_calculator import BitLengthMatchToPrecision
 from app.crossover_method.granular_crossover import GranularCrossover
 from app.crossover_method.one_point_crossover import OnePointCrossover
@@ -12,6 +14,7 @@ from app.other_operations.inversion_operator import InversionOperator
 from app.population import Population
 from app.selection.best_selection import BestSelection
 import logging
+import matplotlib.pyplot as plt
 
 
 def setup_logger(log_level=logging.INFO):
@@ -51,7 +54,7 @@ class GeneticAlgorithm:
     def __init__(self, length_chromosome_calculator, population_size, lower_bounds, upper_bounds, num_iterations,
                  selection_method,
                  crossover_method, mutation_method, num_variables, elitism_rate, other_operation=None,
-                 fittness_function=None):
+                 fittness_function=None, optimization_type='maximization'):
 
         self.logger = logging.getLogger(__name__)
 
@@ -66,6 +69,7 @@ class GeneticAlgorithm:
         self.logger.info(f"Number of variables: {num_variables}")
         self.logger.info(f"Elitism rate: {elitism_rate}")
         self.logger.info(f"Other operations: {other_operation}")
+        self.logger.info(f"Optimization type: {optimization_type}")
 
         self.population_size = population_size
         self.lower_bounds = lower_bounds
@@ -84,6 +88,7 @@ class GeneticAlgorithm:
         self.the_best_chromosome_last_population = None
         self.the_best_fitness_last_population = float('inf')
         self.other_operations = other_operation
+        self.optimization_type = optimization_type
         self.logger = logging.getLogger(__name__)
 
     def fitness_function(self, variables):
@@ -92,7 +97,7 @@ class GeneticAlgorithm:
 
     def select(self, fitness_scores):
         self.logger.debug(f"Selecting chromosomes with fitness scores: {fitness_scores}")
-        return self.selection_method.select(self.population.get_chromosomes(), fitness_scores)
+        return self.selection_method.select(self.population.get_chromosomes(), fitness_scores, self.optimization_type)
 
     def crossover(self, chromosomes_to_crossover):
         self.logger.debug(f"Crossovering chromosomes: {chromosomes_to_crossover}")
@@ -106,7 +111,13 @@ class GeneticAlgorithm:
     def handle_elites(self, fitness_scores):
         self.logger.debug(f"Handling elites for fitness scores: {fitness_scores}")
         num_elites = int(self.elitism_rate * self.population_size)
-        elite_indices = sorted(range(len(fitness_scores)), key=lambda i: fitness_scores[i])[:num_elites]
+
+        if self.optimization_type == 'maximization':
+            elite_indices = sorted(range(len(fitness_scores)), key=lambda i: fitness_scores[i], reverse=True)[
+                            :num_elites]
+        else:  # minimization
+            elite_indices = sorted(range(len(fitness_scores)), key=lambda i: fitness_scores[i])[:num_elites]
+
         elites = [self.population.chromosomes[i] for i in elite_indices]
         return elites
 
@@ -125,6 +136,9 @@ class GeneticAlgorithm:
                 self.the_best_chromosome_last_population = copy.deepcopy(self.population._chromosomes[i])
 
     def run(self):
+        value_function_on_iteration = []
+        avg_fitness_on_iteration = []
+        std_dev_fitness_on_iteration = []
         for iteration in range(self.num_iterations):
             self.logger.info(f"Iteration {iteration + 1}/{self.num_iterations}")
 
@@ -151,12 +165,13 @@ class GeneticAlgorithm:
                 mutated_chromosomes = self.other_operations.apply(mutated_chromosomes)
                 self.logger.debug(f"Chromosomes after other operations: {mutated_chromosomes}")
 
-
             self.population._chromosomes = mutated_chromosomes
             self.logger.debug(f"Population after all: {self.population._chromosomes}")
             self.population._chromosomes.extend(elites)
             self.logger.debug(f"Population after adding elites: {self.population._chromosomes}")
-
+            value_function_on_iteration.append(self.best_fitness)
+            avg_fitness_on_iteration.append(np.mean(fitness_scores))
+            std_dev_fitness_on_iteration.append(np.std(fitness_scores))
 
         self.find_best_chromosome_in_last_iteration(fitness_scores)
 
@@ -168,15 +183,15 @@ class GeneticAlgorithm:
         self.logger.info("Fitness function: %f", self.the_best_fitness_last_population)
         self.logger.info("Best chromosome: %s", self.the_best_chromosome_last_population)
         self.logger.info("Decoded values of the best chromosome: %s", self.the_best_chromosome_last_population.decode())
-
+        return value_function_on_iteration, avg_fitness_on_iteration, std_dev_fitness_on_iteration, self.the_best_fitness_last_population, self.the_best_chromosome_last_population.decode()
 
 
 if __name__ == '__main__':
     conf_lower_bounds = -500.0
     conf_upper_bounds = 500.0
     conf_precision = 0.000001
-    conf_population_size = 20
-    conf_num_iterations = 100
+    conf_population_size = 15
+    conf_num_iterations = 10000
     conf_selection_method = BestSelection(0.20)
     conf_tournament_size = 3
 
@@ -225,13 +240,65 @@ if __name__ == '__main__':
 
         return 418.9829 * n - sum_term
 
+ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,
+                      conf_num_iterations,
+                      conf_selection_method,
+                      conf_crossover_method, conf_mutation_method, conf_num_variables, conf_elitism_rate,
+                      conf_inversion_action,
+                      fitness_function_szwefel, 'minimization')
+value_function_on_iteration, avg_on_iteration, std_on_iteration, best_fitness, best_chromosome_value = ga.run()
+print(value_function_on_iteration)
+print(best_fitness)
+print(best_chromosome_value)
 
-    ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,
-                          conf_num_iterations,
-                          conf_selection_method,
-                          conf_crossover_method, conf_mutation_method, conf_num_variables, conf_elitism_rate,
-                          conf_inversion_action,
-                          fitness_function_szwefel)
-    ga.run()
+
+def draw_function_value_over_iterations(value_function_on_iteration):
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 6))
+    plt.plot(value_function_on_iteration)
+    plt.xlabel('Iteration')
+    plt.ylabel('Fitness Value')
+    plt.title('Fitness Value Over Iterations')
+    plt.grid(True)
+    plt.savefig('results/fitness_value_over_iterations.png')
+    plt.show()
+
+
+def plot_avg_fitness_over_iteration(avg_fitness_on_iteration):
+    plt.figure(figsize=(10, 6))
+    plt.plot(avg_fitness_on_iteration, label='Average Fitness Value')
+    plt.xlabel('Iteration')
+    plt.ylabel('Fitness Value')
+    plt.title('Average Fitness Value Over Iterations')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('results/avg_fitness_over_iterations.png')
+    plt.show()
+
+
+def plot_std_dev_fitness_over_iteration(std_dev_fitness_on_iteration):
+    plt.figure(figsize=(10, 6))
+    plt.plot(std_dev_fitness_on_iteration, label='Standard Deviation of Fitness Value')
+    plt.xlabel('Iteration')
+    plt.ylabel('Fitness Value')
+    plt.title('Standard Deviation of Fitness Value Over Iterations')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('results/std_dev_fitness_over_iterations.png')
+    plt.show()
+
+
+def save_results_to_file(filename, value_function_on_iteration, avg_fitness_on_iteration, std_dev_fitness_on_iteration):
+    with open(filename, 'w') as file:
+        file.write("Iteration,Best Fitness,Average Fitness,Standard Deviation\n")
+        for i in range(len(value_function_on_iteration)):
+            file.write(
+                f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
+
+
+save_results_to_file('results/algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
+draw_function_value_over_iterations(value_function_on_iteration)
+plot_avg_fitness_over_iteration(avg_on_iteration)
+plot_std_dev_fitness_over_iteration(std_on_iteration)
 
 # print(fitness_function_szwefel([118.43]))

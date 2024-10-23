@@ -31,10 +31,10 @@ result = mutation.mutate(population.get_chromosomes())
 print(population.get_chromosomes()[0].chromosome_data)
 print(result[0].chromosome_data)
 
-print("\n")
+
 print(population.get_chromosomes()[1].chromosome_data)
 print(result[1].chromosome_data)
 
-print("\n")
+
 print(population.get_chromosomes()[2].chromosome_data)
 print(result[2].chromosome_data)

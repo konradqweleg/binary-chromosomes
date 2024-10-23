@@ -10,7 +10,7 @@ class TournamentSelection(SelectionMethod):
         self.percentage_the_best_to_select = percentage_the_best_to_select
         self.logger = logging.getLogger(__name__)
 
-    def select(self, population, fitness_scores):
+    def select(self, population, fitness_scores, optimization_type='maximization'):
         self.logger.debug("Selecting method [tournament selection]")
         self.logger.debug("Chromosomes: " + str([str(chromosome) for chromosome in population]))
         self.logger.debug("Fitness scores: " + str(fitness_scores))
@@ -25,7 +25,11 @@ class TournamentSelection(SelectionMethod):
             tournament_participants = [population[i] for i in tournament_indices]
             tournament_fitness_scores = [fitness_scores[i] for i in tournament_indices]
 
-            best_tournament_index = tournament_fitness_scores.index(min(tournament_fitness_scores))
+            if optimization_type == 'maximization':
+                best_tournament_index = tournament_fitness_scores.index(max(tournament_fitness_scores))
+            else:  # minimization
+                best_tournament_index = tournament_fitness_scores.index(min(tournament_fitness_scores))
+
             best_chromosome = tournament_participants[best_tournament_index]
             best_chromosomes.append(best_chromosome)
 

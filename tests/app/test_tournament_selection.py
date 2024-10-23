@@ -34,7 +34,7 @@ class TestTournamentSelection(unittest.TestCase):
         selection_counts = {0: 0, 1: 0, 2: 0, 3: 0}
 
         for _ in range(1000):
-            selected_chromosomes = self.selection_method.select(self.chromosomes, fitness_scores)
+            selected_chromosomes = self.selection_method.select(self.chromosomes, fitness_scores, 'minimization')
             for chromosome in selected_chromosomes:
                 index = self.chromosomes.index(chromosome)
                 selection_counts[index] += 1

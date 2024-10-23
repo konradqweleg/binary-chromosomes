@@ -35,14 +35,14 @@ class TestBestSelection(unittest.TestCase):
     def test_is_selected_the_bests_chromosomes(self):
         chromosomes = self.population.get_chromosomes()
         fitness_scores = self.population.evaluate(fitness_function)
-        selected_chromosomes = self.selection_algorithm.select(chromosomes, fitness_scores)
+        selected_chromosomes = self.selection_algorithm.select(chromosomes, fitness_scores, optimization_type='minimization')
 
         number_of_best_chromosomes = int(len(chromosomes) * 0.4)
 
         best_chromosomes = sorted(chromosomes, key=lambda x: fitness_function(x.decode()))[:number_of_best_chromosomes]
 
         for best_chromosome in best_chromosomes:
-            self.assertIn(best_chromosome, selected_chromosomes)
+            self.assertIn(best_chromosome, selected_chromosomes, )
 
 
 if __name__ == '__main__':
