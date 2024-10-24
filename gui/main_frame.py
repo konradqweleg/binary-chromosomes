@@ -224,6 +224,8 @@ class MainFrame:
         binary_chromosomes_configuration_data.block_size = self.block_size_entry.get()
         binary_chromosomes_configuration_data.probability_to_crossover_block = self.probability_to_crossover_block_entry.get()
         binary_chromosomes_configuration_data.tournament_size = self.tournament_size_entry.get()
+        binary_chromosomes_configuration_data.precision = self.precision_entry.get()
+        binary_chromosomes_configuration_data.num_variable = self.num_variable_entry.get()
         return binary_chromosomes_configuration_data
 
     def start(self):

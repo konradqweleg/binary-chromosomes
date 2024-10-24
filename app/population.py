@@ -12,7 +12,7 @@ class Population:
         return self._chromosomes
 
     def evaluate(self, fitness_function):
-        result = [fitness_function(chromosome.decode()) for chromosome in self._chromosomes]
+        result = [fitness_function.calculate(chromosome.decode()) for chromosome in self._chromosomes]
         return result
 
     def __str__(self):

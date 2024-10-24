@@ -9,13 +9,17 @@ from app.crossover_method.one_point_crossover import OnePointCrossover
 from app.crossover_method.three_point_crossover import ThreePointCrossover
 from app.crossover_method.two_point_crossover import TwoPointCrossover
 from app.crossover_method.uniform_crossover import UniformCrossover
+from app.functions.cec_2014_f1 import Cec2014F1
+from app.functions.griewank_from_lib import GriewankFromLib
+from app.functions.szwefel_from_lib import SzwefelFromLib
+from app.functions.szwefel_function import SzwefelFunction
 from app.mutation.bit_flip_mutation import BitFlipMutation
 from app.other_operations.inversion_operator import InversionOperator
 from app.population import Population
 from app.selection.best_selection import BestSelection
 import logging
 import matplotlib.pyplot as plt
-
+import time
 
 def setup_logger(log_level=logging.INFO):
     with open('app.log', 'w'):
@@ -136,9 +140,11 @@ class GeneticAlgorithm:
                 self.the_best_chromosome_last_population = copy.deepcopy(self.population._chromosomes[i])
 
     def run(self):
+        start_time = time.time()
         value_function_on_iteration = []
         avg_fitness_on_iteration = []
         std_dev_fitness_on_iteration = []
+        value_fitness_function_on_iteration = []
         for iteration in range(self.num_iterations):
             self.logger.info(f"Iteration {iteration + 1}/{self.num_iterations}")
 
@@ -170,11 +176,14 @@ class GeneticAlgorithm:
             self.population._chromosomes.extend(elites)
             self.logger.debug(f"Population after adding elites: {self.population._chromosomes}")
             value_function_on_iteration.append(self.best_fitness)
+            value_fitness_function_on_iteration.append(fitness_scores)
             avg_fitness_on_iteration.append(np.mean(fitness_scores))
             std_dev_fitness_on_iteration.append(np.std(fitness_scores))
 
         self.find_best_chromosome_in_last_iteration(fitness_scores)
-
+        end_time = time.time()
+        time_elapsed = end_time - start_time
+        self.logger.info(f"Time elapsed: {time_elapsed}")
         self.logger.debug("Best result after iterations:")
         self.logger.debug("Fitness function: %f", self.best_fitness)
         self.logger.debug("Best chromosome: %s", self.best_chromosome)
@@ -183,14 +192,14 @@ class GeneticAlgorithm:
         self.logger.info("Fitness function: %f", self.the_best_fitness_last_population)
         self.logger.info("Best chromosome: %s", self.the_best_chromosome_last_population)
         self.logger.info("Decoded values of the best chromosome: %s", self.the_best_chromosome_last_population.decode())
-        return value_function_on_iteration, avg_fitness_on_iteration, std_dev_fitness_on_iteration, self.the_best_fitness_last_population, self.the_best_chromosome_last_population.decode()
+        return value_fitness_function_on_iteration, value_function_on_iteration, avg_fitness_on_iteration, std_dev_fitness_on_iteration, self.the_best_fitness_last_population, self.the_best_chromosome_last_population.decode(),time_elapsed
 
 
 if __name__ == '__main__':
-    conf_lower_bounds = -500.0
-    conf_upper_bounds = 500.0
-    conf_precision = 0.000001
-    conf_population_size = 15
+    conf_lower_bounds = -100.0
+    conf_upper_bounds = 100.0
+    conf_precision = 0.0001
+    conf_population_size = 10
     conf_num_iterations = 10000
     conf_selection_method = BestSelection(0.20)
     conf_tournament_size = 3
@@ -202,7 +211,7 @@ if __name__ == '__main__':
     conf_crossover_method = TwoPointCrossover(0.99)
     conf_crossover_method = ThreePointCrossover(0.99)
     conf_crossover_method = GranularCrossover(0.99, 2, 0.5)
-    conf_crossover_method = UniformCrossover(0.99, 0.5)
+    conf_crossover_method = UniformCrossover(0.50, 0.05)
 
     conf_inversion_action = InversionOperator(0.01)
 
@@ -210,7 +219,7 @@ if __name__ == '__main__':
 
     conf_elitism_rate = 0.1
 
-    conf_num_variables = 3
+    conf_num_variables = 10
 
 
     def fitness_function(variables):
@@ -220,6 +229,8 @@ if __name__ == '__main__':
         return (variables[0] * variables[0] * variables[0]) - (24 * variables[0] * variables[0]) - (180 * variables[0])
 
 
+    def test_square_function(variables):
+        return sum([x * x for x in variables])
     def fitness_function_szwefel(variables):
 
         # Global Minimum:
@@ -240,16 +251,23 @@ if __name__ == '__main__':
 
         return 418.9829 * n - sum_term
 
+
+szwfFunc = SzwefelFunction()
+szwfFunc = SzwefelFromLib()
+szwfFunc = GriewankFromLib()
+szwfFunc = Cec2014F1()
+
 ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,
                       conf_num_iterations,
                       conf_selection_method,
                       conf_crossover_method, conf_mutation_method, conf_num_variables, conf_elitism_rate,
                       conf_inversion_action,
-                      fitness_function_szwefel, 'minimization')
-value_function_on_iteration, avg_on_iteration, std_on_iteration, best_fitness, best_chromosome_value = ga.run()
-print(value_function_on_iteration)
+                      szwfFunc, 'minimization') #minimization
+fitness_value, value_function_on_iteration, avg_on_iteration, std_on_iteration, best_fitness, best_chromosome_value,time_calculation = ga.run()
+#print(value_function_on_iteration)
 print(best_fitness)
 print(best_chromosome_value)
+print(time_calculation)
 
 
 def draw_function_value_over_iterations(value_function_on_iteration):
@@ -295,9 +313,10 @@ def save_results_to_file(filename, value_function_on_iteration, avg_fitness_on_i
             file.write(
                 f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
 
-
+#
 save_results_to_file('results/algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
 draw_function_value_over_iterations(value_function_on_iteration)
+draw_function_value_over_iterations(fitness_value)
 plot_avg_fitness_over_iteration(avg_on_iteration)
 plot_std_dev_fitness_over_iteration(std_on_iteration)
 
