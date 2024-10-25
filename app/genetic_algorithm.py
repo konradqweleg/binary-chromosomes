@@ -257,67 +257,67 @@ szwfFunc = SzwefelCustomImpl()
 szwfFunc = Griewank()
 szwfFunc = Cec2014F1()
 
-ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,
-                      conf_num_iterations,
-                      conf_selection_method,
-                      conf_crossover_method, conf_mutation_method, conf_num_variables, conf_elitism_rate,
-                      conf_inversion_action,
-                      szwfFunc, 'minimization') #minimization
-fitness_value, value_function_on_iteration, avg_on_iteration, std_on_iteration, best_fitness, best_chromosome_value,time_calculation = ga.run()
-#print(value_function_on_iteration)
-print(best_fitness)
-print(best_chromosome_value)
-print(time_calculation)
+# ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,
+#                       conf_num_iterations,
+#                       conf_selection_method,
+#                       conf_crossover_method, conf_mutation_method, conf_num_variables, conf_elitism_rate,
+#                       conf_inversion_action,
+#                       szwfFunc, 'minimization') #minimization
+# fitness_value, value_function_on_iteration, avg_on_iteration, std_on_iteration, best_fitness, best_chromosome_value,time_calculation = ga.run()
+# #print(value_function_on_iteration)
+# print(best_fitness)
+# print(best_chromosome_value)
+# print(time_calculation)
 
 
-def draw_function_value_over_iterations(value_function_on_iteration):
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(10, 6))
-    plt.plot(value_function_on_iteration)
-    plt.xlabel('Iteration')
-    plt.ylabel('Fitness Value')
-    plt.title('Fitness Value Over Iterations')
-    plt.grid(True)
-    plt.savefig('results/fitness_value_over_iterations.png')
-    plt.show()
-
-
-def plot_avg_fitness_over_iteration(avg_fitness_on_iteration):
-    plt.figure(figsize=(10, 6))
-    plt.plot(avg_fitness_on_iteration, label='Average Fitness Value')
-    plt.xlabel('Iteration')
-    plt.ylabel('Fitness Value')
-    plt.title('Average Fitness Value Over Iterations')
-    plt.legend()
-    plt.grid(True)
-    plt.savefig('results/avg_fitness_over_iterations.png')
-    plt.show()
-
-
-def plot_std_dev_fitness_over_iteration(std_dev_fitness_on_iteration):
-    plt.figure(figsize=(10, 6))
-    plt.plot(std_dev_fitness_on_iteration, label='Standard Deviation of Fitness Value')
-    plt.xlabel('Iteration')
-    plt.ylabel('Fitness Value')
-    plt.title('Standard Deviation of Fitness Value Over Iterations')
-    plt.legend()
-    plt.grid(True)
-    plt.savefig('results/std_dev_fitness_over_iterations.png')
-    plt.show()
-
-
-def save_results_to_file(filename, value_function_on_iteration, avg_fitness_on_iteration, std_dev_fitness_on_iteration):
-    with open(filename, 'w') as file:
-        file.write("Iteration,Best Fitness,Average Fitness,Standard Deviation\n")
-        for i in range(len(value_function_on_iteration)):
-            file.write(
-                f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
-
+# def draw_function_value_over_iterations(value_function_on_iteration):
+#     import matplotlib.pyplot as plt
+#     plt.figure(figsize=(10, 6))
+#     plt.plot(value_function_on_iteration)
+#     plt.xlabel('Iteration')
+#     plt.ylabel('Fitness Value')
+#     plt.title('Fitness Value Over Iterations')
+#     plt.grid(True)
+#     plt.savefig('results/fitness_value_over_iterations.png')
+#     plt.show()
 #
-save_results_to_file('results/algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
-draw_function_value_over_iterations(value_function_on_iteration)
-draw_function_value_over_iterations(fitness_value)
-plot_avg_fitness_over_iteration(avg_on_iteration)
-plot_std_dev_fitness_over_iteration(std_on_iteration)
+#
+# def plot_avg_fitness_over_iteration(avg_fitness_on_iteration):
+#     plt.figure(figsize=(10, 6))
+#     plt.plot(avg_fitness_on_iteration, label='Average Fitness Value')
+#     plt.xlabel('Iteration')
+#     plt.ylabel('Fitness Value')
+#     plt.title('Average Fitness Value Over Iterations')
+#     plt.legend()
+#     plt.grid(True)
+#     plt.savefig('results/avg_fitness_over_iterations.png')
+#     plt.show()
+#
+#
+# def plot_std_dev_fitness_over_iteration(std_dev_fitness_on_iteration):
+#     plt.figure(figsize=(10, 6))
+#     plt.plot(std_dev_fitness_on_iteration, label='Standard Deviation of Fitness Value')
+#     plt.xlabel('Iteration')
+#     plt.ylabel('Fitness Value')
+#     plt.title('Standard Deviation of Fitness Value Over Iterations')
+#     plt.legend()
+#     plt.grid(True)
+#     plt.savefig('results/std_dev_fitness_over_iterations.png')
+#     plt.show()
+#
+#
+# def save_results_to_file(filename, value_function_on_iteration, avg_fitness_on_iteration, std_dev_fitness_on_iteration):
+#     with open(filename, 'w') as file:
+#         file.write("Iteration,Best Fitness,Average Fitness,Standard Deviation\n")
+#         for i in range(len(value_function_on_iteration)):
+#             file.write(
+#                 f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
 
+
+# save_results_to_file('results/algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
+# draw_function_value_over_iterations(value_function_on_iteration)
+# draw_function_value_over_iterations(fitness_value)
+# plot_avg_fitness_over_iteration(avg_on_iteration)
+# plot_std_dev_fitness_over_iteration(std_on_iteration)
+#
 # print(fitness_function_szwefel([118.43]))
