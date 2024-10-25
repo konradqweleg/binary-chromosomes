@@ -10,9 +10,9 @@ from app.crossover_method.three_point_crossover import ThreePointCrossover
 from app.crossover_method.two_point_crossover import TwoPointCrossover
 from app.crossover_method.uniform_crossover import UniformCrossover
 from app.functions.cec_2014_f1 import Cec2014F1
-from app.functions.griewank_from_lib import GriewankFromLib
-from app.functions.szwefel_from_lib import SzwefelFromLib
-from app.functions.szwefel_function import SzwefelFunction
+from app.functions.griewank import Griewank
+from app.functions.szwefel import Szwefel
+from app.functions.szwefel_custom_impl import SzwefelCustomImpl
 from app.mutation.bit_flip_mutation import BitFlipMutation
 from app.other_operations.inversion_operator import InversionOperator
 from app.population import Population
@@ -252,9 +252,9 @@ if __name__ == '__main__':
         return 418.9829 * n - sum_term
 
 
-szwfFunc = SzwefelFunction()
-szwfFunc = SzwefelFromLib()
-szwfFunc = GriewankFromLib()
+szwfFunc = SzwefelCustomImpl()
+szwfFunc = SzwefelCustomImpl()
+szwfFunc = Griewank()
 szwfFunc = Cec2014F1()
 
 ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,

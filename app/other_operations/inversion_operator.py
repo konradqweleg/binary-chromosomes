@@ -27,7 +27,7 @@ class InversionOperator(Operation):
 
                 new_gens_for_chromosome[point1:point2 + 1] = reversed(new_gens_for_chromosome[point1:point2 + 1])
                 self.logger.debug("new_gens_for_chromosome: %s vs %s", new_gens_for_chromosome,
-                                 chromosome.chromosome_data)
+                                  chromosome.chromosome_data)
 
             new_chromosomes.append(BinaryChromosome.copy_with_new_chromosomes(chromosome, new_gens_for_chromosome))
 

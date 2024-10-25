@@ -1,7 +1,7 @@
 import math
 
 from app.functions.function_to_calculate import FunctionToCalculate
-class SzwefelFunction(FunctionToCalculate):
+class SzwefelCustomImpl(FunctionToCalculate):
     def calculate(self, variables):
         # Global Minimum:
         # Function Value: 2.545567497236334e-5
