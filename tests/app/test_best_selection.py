@@ -1,12 +1,12 @@
 import unittest
-from app.bit_length_calculator import BitLengthMatchToPrecision
+from app.bit_length_calculator.bit_length_match_to_precision import BitLengthMatchToPrecision
 from app.population import Population
 from app.selection.best_selection import BestSelection
+from app.functions.function_to_calculate import FunctionToCalculate
 
-
-def fitness_function(variables):
-    return sum([x * x + 5 for x in variables])
-
+class FitnessFunction(FunctionToCalculate):
+    def calculate(self, variables):
+        return sum([x * x + 5 for x in variables])
 
 class TestBestSelection(unittest.TestCase):
 
@@ -22,10 +22,11 @@ class TestBestSelection(unittest.TestCase):
         self.population = Population(self.bit_length_calculator, self.population_size, self.lower_bounds,
                                      self.upper_bounds, self.num_variables)
         self.selection_algorithm = BestSelection(0.4)
+        self.fitness_function = FitnessFunction()
 
     def test_select(self):
         chromosomes = self.population.get_chromosomes()
-        fitness_scores = self.population.evaluate(fitness_function)
+        fitness_scores = self.population.evaluate(self.fitness_function)
         selected_chromosomes = self.selection_algorithm.select(chromosomes, fitness_scores)
 
         self.assertEqual(len(selected_chromosomes), int(self.population_size * 0.4))
@@ -34,16 +35,15 @@ class TestBestSelection(unittest.TestCase):
 
     def test_is_selected_the_bests_chromosomes(self):
         chromosomes = self.population.get_chromosomes()
-        fitness_scores = self.population.evaluate(fitness_function)
+        fitness_scores = self.population.evaluate(self.fitness_function)
         selected_chromosomes = self.selection_algorithm.select(chromosomes, fitness_scores, optimization_type='minimization')
 
         number_of_best_chromosomes = int(len(chromosomes) * 0.4)
 
-        best_chromosomes = sorted(chromosomes, key=lambda x: fitness_function(x.decode()))[:number_of_best_chromosomes]
+        best_chromosomes = sorted(chromosomes, key=lambda x: self.fitness_function.calculate(x.decode()))[:number_of_best_chromosomes]
 
         for best_chromosome in best_chromosomes:
-            self.assertIn(best_chromosome, selected_chromosomes, )
-
+            self.assertIn(best_chromosome, selected_chromosomes)
 
 if __name__ == '__main__':
     unittest.main()

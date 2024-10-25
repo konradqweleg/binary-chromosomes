@@ -1,7 +1,9 @@
+import os
 import time
 from tkinter import Tk, Label, Entry, OptionMenu, StringVar, Button, Toplevel
 from tkinter.ttk import Radiobutton
 
+import numpy as np
 
 from app.configuration.configuration_genetic_algorithm import ConfigurationGeneticAlgorithm
 from app.models.enums.cross_method import CrossoverMethod
@@ -45,6 +47,7 @@ class MainFrame:
         self.end_of_the_range_entry = None
         self.begin_of_the_range_entry = None
         self.epochs_entry = None
+        self.image_folder_number = 0
 
     def initialization_frame(self):
 
@@ -52,7 +55,7 @@ class MainFrame:
         begin_of_the_range_label.grid(padx=3, pady=3, row=0, column=0, sticky='w')
         self.begin_of_the_range_entry = Entry(self.root)
         self.begin_of_the_range_entry.grid(padx=3, pady=3, row=0, column=1)
-        self.begin_of_the_range_entry.insert(0, "0")
+        self.begin_of_the_range_entry.insert(0, "-500")
 
         end_of_the_range_label = Label(self.root, text="End of the range")
         end_of_the_range_label.grid(padx=3, pady=3, row=1, column=0, sticky='w')
@@ -60,44 +63,44 @@ class MainFrame:
 
 
         self.end_of_the_range_entry.grid(padx=3, pady=3, row=1, column=1)
-        self.end_of_the_range_entry.insert(0, "10")
+        self.end_of_the_range_entry.insert(0, "500")
 
         precision = Label(self.root, text="Precision")
         precision.grid(padx=3, pady=3, row=2, column=0, sticky='w')
         self.precision_entry = Entry(self.root)
         self.precision_entry.grid(padx=3, pady=3, row=2, column=1)
-        self.precision_entry.insert(0, "0.01")
+        self.precision_entry.insert(0, "0.0001")
 
         population_label = Label(self.root, text="Population")
         population_label.grid(padx=3, pady=3, row=3, column=0, sticky='w')
         self.population_entry = Entry(self.root, validate='all',
                                       validatecommand=(self.input_validations.number_input_validation(), '%P'))
         self.population_entry.grid(padx=3, pady=3, row=3, column=1)
-        self.population_entry.insert(0, "100")
+        self.population_entry.insert(0, "15")
 
         epochs_label = Label(self.root, text="Epochs")
         epochs_label.grid(padx=3, pady=3, row=4, column=0, sticky='w')
         self.epochs_entry = Entry(self.root)
         self.epochs_entry.grid(padx=3, pady=3, row=4, column=1)
-        self.epochs_entry.insert(0, "50")
+        self.epochs_entry.insert(0, "1000")
 
         num_variable = Label(self.root, text="Number of parameters")
         num_variable.grid(padx=3, pady=3, row=5, column=0, sticky='w')
         self.num_variable_entry = Entry(self.root)
         self.num_variable_entry.grid(padx=3, pady=3, row=5, column=1)
-        self.num_variable_entry.insert(0, "2")
+        self.num_variable_entry.insert(0, "3")
 
         elite_strategy_label = Label(self.root, text="Percentage elite strategy")
         elite_strategy_label.grid(padx=3, pady=3, row=6, column=0, sticky='w')
         self.elite_strategy_entry = Entry(self.root)
         self.elite_strategy_entry.grid(padx=3, pady=3, row=6, column=1)
-        self.elite_strategy_entry.insert(0, "10")
+        self.elite_strategy_entry.insert(0, "0.15")
 
         cross_probability_label = Label(self.root, text="Cross probability")
         cross_probability_label.grid(padx=3, pady=3, row=7, column=0, sticky='w')
         self.cross_probability_entry = Entry(self.root)
         self.cross_probability_entry.grid(padx=3, pady=3, row=7, column=1)
-        self.cross_probability_entry.insert(0, "0.7")
+        self.cross_probability_entry.insert(0, "0.5")
 
         mutation_probability_label = Label(self.root, text="Mutation probability")
         mutation_probability_label.grid(padx=3, pady=3, row=8, column=0, sticky='w')
@@ -124,7 +127,7 @@ class MainFrame:
         percentage_the_best_to_select_label.grid(padx=3, pady=3, row=11, column=0, sticky='w')
         self.percentage_the_best_to_select_entry = Entry(self.root)
         self.percentage_the_best_to_select_entry.grid(padx=3, pady=3, row=11, column=1)
-        self.percentage_the_best_to_select_entry.insert(0, "20")
+        self.percentage_the_best_to_select_entry.insert(0, "0.20")
 
         self.tournament_size_label = Label(self.root, text="Tournament size")
         self.tournament_size_label.grid_forget()
@@ -254,56 +257,82 @@ class MainFrame:
             genetic_algorithm = configuration_genetic_algorithm.configuration(configuration_data)
             (fitness_value, value_function_on_iteration, avg_on_iteration,
              std_on_iteration, best_fitness, best_chromosome_value,time_calculation) = genetic_algorithm.run()
-            self.save_results_to_file('results/algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
+
+            folder_path = f'results/{self.image_folder_number}'
+            os.makedirs(folder_path, exist_ok=True)
+
+
+            self.save_results_to_file('algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
             self.draw_function_value_over_iterations(value_function_on_iteration)
-            self.draw_function_value_over_iterations(fitness_value)
+           # self.draw_function_value_over_iterations(fitness_value)
+            last_value = value_function_on_iteration[-1]
             self.plot_avg_fitness_over_iteration(avg_on_iteration)
             self.plot_std_dev_fitness_over_iteration(std_on_iteration)
-            self.open_new_window(time_calculation, best_chromosome_value)
+            self.image_folder_number += 1
+            self.open_new_window(time_calculation, best_chromosome_value, last_value)
+
+    def downsample_data(self, data, max_points=500):
+        if len(data) > max_points:
+            indices = np.linspace(0, len(data) - 1, max_points, dtype=int)
+            return [data[i] for i in indices], indices
+        return data, np.arange(len(data))
 
     def draw_function_value_over_iterations(self, value_function_on_iteration):
+        min_values_per_iteration, indices = self.downsample_data(value_function_on_iteration)
+
         plt.figure(figsize=(10, 6))
-        plt.plot(value_function_on_iteration)
+        plt.plot(indices, min_values_per_iteration)
         plt.xlabel('Iteration')
-        plt.ylabel('Fitness Value')
-        plt.title('Fitness Value Over Iterations')
+        plt.ylabel('Minimum Fitness Value')
+        plt.title('Minimum Fitness Value Over Iterations')
         plt.grid(True)
+        plt.savefig(f'results/{self.image_folder_number}/fitness_value_over_iterations.png')
         plt.savefig('results/fitness_value_over_iterations.png')
+
         plt.show()
 
     def plot_avg_fitness_over_iteration(self, avg_fitness_on_iteration):
+        avg_fitness_on_iteration, indices = self.downsample_data(avg_fitness_on_iteration)
+
         plt.figure(figsize=(10, 6))
-        plt.plot(avg_fitness_on_iteration, label='Average Fitness Value')
+        plt.plot(indices, avg_fitness_on_iteration, label='Average Fitness Value')
         plt.xlabel('Iteration')
         plt.ylabel('Fitness Value')
         plt.title('Average Fitness Value Over Iterations')
         plt.legend()
         plt.grid(True)
+        plt.savefig(f'results/{self.image_folder_number}/avg_fitness_over_iterations.png')
         plt.savefig('results/avg_fitness_over_iterations.png')
         plt.show()
 
     def plot_std_dev_fitness_over_iteration(self, std_dev_fitness_on_iteration):
+        std_dev_fitness_on_iteration, indices = self.downsample_data(std_dev_fitness_on_iteration)
+
         plt.figure(figsize=(10, 6))
-        plt.plot(std_dev_fitness_on_iteration, label='Standard Deviation of Fitness Value')
+        plt.plot(indices, std_dev_fitness_on_iteration, label='Standard Deviation of Fitness Value')
         plt.xlabel('Iteration')
         plt.ylabel('Fitness Value')
         plt.title('Standard Deviation of Fitness Value Over Iterations')
         plt.legend()
         plt.grid(True)
+        folder_path = f'results/{self.image_folder_number}'
+        os.makedirs(folder_path, exist_ok=True)
+        plt.savefig(f'results/{self.image_folder_number}/std_dev_fitness_over_iterations.png')
         plt.savefig('results/std_dev_fitness_over_iterations.png')
         plt.show()
 
     def save_results_to_file(self, filename, value_function_on_iteration, avg_fitness_on_iteration,
                              std_dev_fitness_on_iteration):
-        with open(filename, 'w') as file:
+
+        with open(f'results/{self.image_folder_number}/{filename}', 'w') as file:
             file.write("Iteration,Best Fitness,Average Fitness,Standard Deviation\n")
             for i in range(len(value_function_on_iteration)):
                 file.write(
                     f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
 
-    def open_new_window(self, result_time, best_chromosome_value):
+    def open_new_window(self, result_time, best_chromosome_value,last_value):
         new_window = Toplevel(self.root)
-        ImageExplorer(new_window, result_time, best_chromosome_value)
+        ImageExplorer(new_window, result_time, best_chromosome_value,last_value)
 
 fra = MainFrame()
 fra.start()

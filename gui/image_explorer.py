@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 import os
 
 class ImageExplorer:
-    def __init__(self, root, result_time, best_chromosome_value):
+    def __init__(self, root, result_time, best_chromosome_value,last_fitness_value):
         self.root = root
         self.root.title("Image Explorer")
 
@@ -21,6 +21,9 @@ class ImageExplorer:
         result_string = ", ".join(rounded_strings)
 
         self.best_chromosome_value_label = tk.Label(root, text=f'Result: {result_string}')
+        self.best_chromosome_value_label.pack(padx=20, pady=20)
+
+        self.best_chromosome_value_label = tk.Label(root, text=f'Fitness Result: {round(last_fitness_value, 3)}')
         self.best_chromosome_value_label.pack(padx=20, pady=20)
 
         self.previous_button = tk.Button(root, text="Previous", command=self.show_previous_image)

@@ -196,8 +196,8 @@ class GeneticAlgorithm:
 
 
 if __name__ == '__main__':
-    conf_lower_bounds = -100.0
-    conf_upper_bounds = 100.0
+    conf_lower_bounds = -500.0
+    conf_upper_bounds = 500.0
     conf_precision = 0.0001
     conf_population_size = 10
     conf_num_iterations = 10000
@@ -206,7 +206,6 @@ if __name__ == '__main__':
 
     conf_chromosome_length_calculator = BitLengthMatchToPrecision(conf_precision, conf_lower_bounds, conf_upper_bounds,
                                                                   3)
-
     conf_crossover_method = OnePointCrossover(0.99)
     conf_crossover_method = TwoPointCrossover(0.99)
     conf_crossover_method = ThreePointCrossover(0.99)
@@ -217,9 +216,9 @@ if __name__ == '__main__':
 
     conf_mutation_method = BitFlipMutation(0.01)
 
-    conf_elitism_rate = 0.1
+    conf_elitism_rate = 0.2
 
-    conf_num_variables = 10
+    conf_num_variables = 3
 
 
     def fitness_function(variables):
@@ -253,9 +252,9 @@ if __name__ == '__main__':
 
 
 szwfFunc = SzwefelCustomImpl()
-szwfFunc = SzwefelCustomImpl()
-szwfFunc = Griewank()
-szwfFunc = Cec2014F1()
+# szwfFunc = SzwefelCustomImpl()
+# szwfFunc = Griewank()
+# szwfFunc = Cec2014F1()
 
 # ga = GeneticAlgorithm(conf_chromosome_length_calculator, conf_population_size, conf_lower_bounds, conf_upper_bounds,
 #                       conf_num_iterations,

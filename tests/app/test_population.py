@@ -1,9 +1,12 @@
 import unittest
 from app.binary_chromosome import BinaryChromosome
 from app.bit_length_calculator.bit_length_match_to_precision import BitLengthMatchToPrecision
+from app.functions.function_to_calculate import FunctionToCalculate
 from app.population import Population
 
-
+class DummyFitnessFunction(FunctionToCalculate):
+    def calculate(self, variables):
+        return sum(variables)
 class TestPopulation(unittest.TestCase):
 
     def setUp(self):
@@ -27,9 +30,7 @@ class TestPopulation(unittest.TestCase):
         self.assertEqual(len(self.population.get_chromosomes()), self.population_size)
 
     def test_evaluate(self):
-        def dummy_fitness_function(decoded_values):
-            return sum(decoded_values)
-
+        dummy_fitness_function = DummyFitnessFunction()
         evaluations = self.population.evaluate(dummy_fitness_function)
         self.assertEqual(len(evaluations), self.population_size)
         for evaluation in evaluations:
