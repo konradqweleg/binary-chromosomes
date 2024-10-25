@@ -262,7 +262,7 @@ class MainFrame:
             os.makedirs(folder_path, exist_ok=True)
 
 
-            self.save_results_to_file('algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
+            self.save_results_to_file('algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration,best_chromosome_value)
             self.draw_function_value_over_iterations(value_function_on_iteration)
            # self.draw_function_value_over_iterations(fitness_value)
             last_value = value_function_on_iteration[-1]
@@ -322,13 +322,13 @@ class MainFrame:
         plt.show()
 
     def save_results_to_file(self, filename, value_function_on_iteration, avg_fitness_on_iteration,
-                             std_dev_fitness_on_iteration):
+                             std_dev_fitness_on_iteration,best_chromosome_value):
 
         with open(f'results/{self.image_folder_number}/{filename}', 'w') as file:
             file.write("Iteration,Best Fitness,Average Fitness,Standard Deviation\n")
             for i in range(len(value_function_on_iteration)):
                 file.write(
-                    f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
+                    f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]},{best_chromosome_value}\n")
 
     def open_new_window(self, result_time, best_chromosome_value,last_value):
         new_window = Toplevel(self.root)
