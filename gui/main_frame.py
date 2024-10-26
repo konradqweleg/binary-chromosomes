@@ -192,7 +192,7 @@ class MainFrame:
         start_button = Button(self.root, text="Start", command=self.run_generic_algorithm)
         start_button.grid(padx=3, pady=3, row=21, column=0, columnspan=2)
 
-        self.root.geometry('350x550')
+        self.root.geometry('370x550')
         self.root.title('Binary Chromosomes')
         self.root.resizable(False, False)
         self.root.mainloop()
