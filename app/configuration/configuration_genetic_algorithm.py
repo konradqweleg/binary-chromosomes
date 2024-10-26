@@ -56,7 +56,7 @@ class ConfigurationGeneticAlgorithm:
                 return BestSelection(float(form_data.percentage_the_best_to_select))
             case SelectionMethod.TOURNAMENT_SELECTION:
                 return TournamentSelection(
-                    float(form_data.percentage_the_best_to_select), form_data.tournament_size)
+                    float(form_data.percentage_the_best_to_select), int(form_data.tournament_size))
 
     def _get_crossover_method(self, form_data):
         match form_data.cross_method:

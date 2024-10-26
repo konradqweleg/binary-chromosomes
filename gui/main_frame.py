@@ -192,7 +192,7 @@ class MainFrame:
         start_button = Button(self.root, text="Start", command=self.run_generic_algorithm)
         start_button.grid(padx=3, pady=3, row=21, column=0, columnspan=2)
 
-        self.root.geometry('370x550')
+        self.root.geometry('370x580')
         self.root.title('Binary Chromosomes')
         self.root.resizable(False, False)
         self.root.mainloop()
@@ -245,6 +245,7 @@ class MainFrame:
         binary_chromosomes_configuration_data.tournament_size = self.tournament_size_entry.get()
         binary_chromosomes_configuration_data.precision = self.precision_entry.get()
         binary_chromosomes_configuration_data.num_variable = self.num_variable_entry.get()
+        binary_chromosomes_configuration_data.probability_to_crossover_gene = self.probability_to_crossover_gene_entry.get()
         return binary_chromosomes_configuration_data
 
     def start(self):
