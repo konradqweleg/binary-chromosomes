@@ -53,7 +53,8 @@ class MainFrame:
 
         begin_of_the_range_label = Label(self.root, text="Begin of the range")
         begin_of_the_range_label.grid(padx=3, pady=3, row=0, column=0, sticky='w')
-        self.begin_of_the_range_entry = Entry(self.root)
+        self.begin_of_the_range_entry = Entry(self.root, validate="key",
+                                        validatecommand=(self.input_validations.number_input_validation(), "%P"))
         self.begin_of_the_range_entry.grid(padx=3, pady=3, row=0, column=1)
         self.begin_of_the_range_entry.insert(0, "-500")
 
@@ -67,7 +68,7 @@ class MainFrame:
 
         precision = Label(self.root, text="Precision")
         precision.grid(padx=3, pady=3, row=2, column=0, sticky='w')
-        self.precision_entry = Entry(self.root)
+        self.precision_entry = Entry(self.root, validate="key", validatecommand=(self.input_validations.float_input_validation(), "%P"))
         self.precision_entry.grid(padx=3, pady=3, row=2, column=1)
         self.precision_entry.insert(0, "0.0001")
 
