@@ -51,7 +51,7 @@ class ConfigurationGeneticAlgorithm:
         match form_data.selection_method:
             case SelectionMethod.ROULETTE_WHEEL_SELECTION:
                 return RouletteWheelSelection(
-                    float(form_data.percentage_the_best_to_select), form_data.optimization_type)
+                    float(form_data.percentage_the_best_to_select))
             case SelectionMethod.BEST_SELECTION:
                 return BestSelection(float(form_data.percentage_the_best_to_select))
             case SelectionMethod.TOURNAMENT_SELECTION:

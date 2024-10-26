@@ -4,15 +4,15 @@ from app.selection.selection_method import SelectionMethod
 
 
 class RouletteWheelSelection(SelectionMethod):
-    def __init__(self, percentage_chromosomes_to_select, optimization_type='maximization'):
+    def __init__(self, percentage_chromosomes_to_select):
         self.percentage_chromosomes_to_select = percentage_chromosomes_to_select
-        self.optimization_type = optimization_type.lower()
+        #self.optimization_type = optimization_type.lower()
         self.logger = logging.getLogger(__name__)
 
-        if self.optimization_type not in ['minimization', 'maximization']:
-            raise ValueError("optimization_type must be either 'minimization' or 'maximization'")
+        #if self.optimization_type not in ['minimization', 'maximization']:
+         #   raise ValueError("optimization_type must be either 'minimization' or 'maximization'")
 
-    def select(self, population, fitness_scores):
+    def select(self, population, fitness_scores,optimization_type='maximization'):
         self.logger.debug("Selecting method [roulette wheel selection]")
         self.logger.debug("Chromosomes: " + str([str(chromosome) for chromosome in population]))
         self.logger.debug("Fitness scores: " + str(fitness_scores))
@@ -24,7 +24,7 @@ class RouletteWheelSelection(SelectionMethod):
 
         self.logger.debug("Adjusted fitness scores (after handling negatives): " + str(fitness_scores))
 
-        if self.optimization_type == 'minimization':
+        if optimization_type == 'minimization':
             max_fitness = max(fitness_scores)
             fitness_scores = [max_fitness - score for score in fitness_scores]
 
