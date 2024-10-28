@@ -22,6 +22,7 @@ class MainFrame:
     input_validations = InputValidations(root)
 
     def __init__(self):
+        self.validations_label = None
         self.tournament_size_label = None
         self.probability_to_crossover_gene_label = None
         self.probability_to_crossover_block_label = None
@@ -54,13 +55,14 @@ class MainFrame:
         begin_of_the_range_label = Label(self.root, text="Begin of the range")
         begin_of_the_range_label.grid(padx=3, pady=3, row=0, column=0, sticky='w')
         self.begin_of_the_range_entry = Entry(self.root, validate="key",
-                                        validatecommand=(self.input_validations.number_input_validation(), "%P"))
+                                              validatecommand=(self.input_validations.validate_signed_number(), "%P"))
         self.begin_of_the_range_entry.grid(padx=3, pady=3, row=0, column=1)
         self.begin_of_the_range_entry.insert(0, "-500")
 
         end_of_the_range_label = Label(self.root, text="End of the range")
         end_of_the_range_label.grid(padx=3, pady=3, row=1, column=0, sticky='w')
-        self.end_of_the_range_entry = Entry(self.root, validate='all')
+        self.end_of_the_range_entry = Entry(self.root, validate="key",
+                                              validatecommand=(self.input_validations.validate_signed_number(), "%P"))
 
 
         self.end_of_the_range_entry.grid(padx=3, pady=3, row=1, column=1)
@@ -68,50 +70,57 @@ class MainFrame:
 
         precision = Label(self.root, text="Precision")
         precision.grid(padx=3, pady=3, row=2, column=0, sticky='w')
-        self.precision_entry = Entry(self.root, validate="key", validatecommand=(self.input_validations.float_input_validation(), "%P"))
+        self.precision_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.precision_entry.grid(padx=3, pady=3, row=2, column=1)
         self.precision_entry.insert(0, "0.0001")
 
         population_label = Label(self.root, text="Population")
         population_label.grid(padx=3, pady=3, row=3, column=0, sticky='w')
-        self.population_entry = Entry(self.root, validate='all',
-                                      validatecommand=(self.input_validations.number_input_validation(), '%P'))
+        self.population_entry = Entry(self.root, validate='key',
+                                      validatecommand=(self.input_validations.validate_number_input(), '%P'))
         self.population_entry.grid(padx=3, pady=3, row=3, column=1)
         self.population_entry.insert(0, "15")
 
         epochs_label = Label(self.root, text="Epochs")
         epochs_label.grid(padx=3, pady=3, row=4, column=0, sticky='w')
-        self.epochs_entry = Entry(self.root)
+        self.epochs_entry = Entry(self.root, validate="key",
+                                              validatecommand=(self.input_validations.validate_number_input(), "%P"))
         self.epochs_entry.grid(padx=3, pady=3, row=4, column=1)
         self.epochs_entry.insert(0, "1000")
 
         num_variable = Label(self.root, text="Number of parameters")
         num_variable.grid(padx=3, pady=3, row=5, column=0, sticky='w')
-        self.num_variable_entry = Entry(self.root)
+        self.num_variable_entry = Entry(self.root, validate='key',
+                                      validatecommand=(self.input_validations.validate_number_input(), '%P'))
         self.num_variable_entry.grid(padx=3, pady=3, row=5, column=1)
         self.num_variable_entry.insert(0, "3")
 
         elite_strategy_label = Label(self.root, text="Percentage elite strategy")
         elite_strategy_label.grid(padx=3, pady=3, row=6, column=0, sticky='w')
-        self.elite_strategy_entry = Entry(self.root)
+        self.elite_strategy_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.elite_strategy_entry.grid(padx=3, pady=3, row=6, column=1)
         self.elite_strategy_entry.insert(0, "0.15")
 
         cross_probability_label = Label(self.root, text="Cross probability")
         cross_probability_label.grid(padx=3, pady=3, row=7, column=0, sticky='w')
-        self.cross_probability_entry = Entry(self.root)
+        self.cross_probability_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.cross_probability_entry.grid(padx=3, pady=3, row=7, column=1)
         self.cross_probability_entry.insert(0, "0.5")
 
         mutation_probability_label = Label(self.root, text="Mutation probability")
         mutation_probability_label.grid(padx=3, pady=3, row=8, column=0, sticky='w')
-        self.mutation_probability_entry = Entry(self.root)
+        self.mutation_probability_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.mutation_probability_entry.grid(padx=3, pady=3, row=8, column=1)
         self.mutation_probability_entry.insert(0, "0.01")
 
         inversion_probability_label = Label(self.root, text="Inversion probability")
         inversion_probability_label.grid(padx=3, pady=3, row=9, column=0, sticky='w')
-        self.inversion_probability_entry = Entry(self.root)
+        self.inversion_probability_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.inversion_probability_entry.grid(padx=3, pady=3, row=9, column=1)
         self.inversion_probability_entry.insert(0, "0.05")
 
@@ -132,8 +141,8 @@ class MainFrame:
 
         self.tournament_size_label = Label(self.root, text="Tournament size")
         self.tournament_size_label.grid_forget()
-        self.tournament_size_entry = Entry(self.root, validate='all',
-                                           validatecommand=(self.input_validations.number_input_validation(), '%P'))
+        self.tournament_size_entry = Entry(self.root, validate='key',
+                                           validatecommand=(self.input_validations.validate_number_input(), '%P'))
         self.tournament_size_entry.grid_forget()
         self.tournament_size_entry.insert(0, "3")
 
@@ -148,20 +157,22 @@ class MainFrame:
 
         self.block_size_label = Label(self.root, text="Block size")
         self.block_size_label.grid_forget()
-        self.block_size_entry = Entry(self.root, validate='all',
-                                      validatecommand=(self.input_validations.number_input_validation(), '%P'))
+        self.block_size_entry = Entry(self.root, validate='key',
+                                      validatecommand=(self.input_validations.validate_number_input(), '%P'))
         self.block_size_entry.grid_forget()
         self.block_size_entry.insert(0, "2")
 
         self.probability_to_crossover_block_label = Label(self.root, text="Probability to crossover blocks")
         self.probability_to_crossover_block_label.grid_forget()
-        self.probability_to_crossover_block_entry = Entry(self.root)
+        self.probability_to_crossover_block_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.probability_to_crossover_block_entry.grid_forget()
         self.probability_to_crossover_block_entry.insert(0, "0.5")
 
         self.probability_to_crossover_gene_label = Label(self.root, text="Probability to crossover gene")
         self.probability_to_crossover_gene_label.grid_forget()
-        self.probability_to_crossover_gene_entry = Entry(self.root)
+        self.probability_to_crossover_gene_entry = Entry(self.root, validate="all",
+                                              validatecommand=(self.input_validations.validate_percentage_input(), "%P"))
         self.probability_to_crossover_gene_entry.grid_forget()
         self.probability_to_crossover_gene_entry.insert(0, "0.5")
 
@@ -192,6 +203,9 @@ class MainFrame:
 
         start_button = Button(self.root, text="Start", command=self.run_generic_algorithm)
         start_button.grid(padx=3, pady=3, row=21, column=0, columnspan=2)
+
+        self.validations_label = Label(self.root)
+        self.validations_label.grid_forget()
 
         self.root.geometry('370x580')
         self.root.title('Binary Chromosomes')
@@ -230,31 +244,50 @@ class MainFrame:
         binary_chromosomes_configuration_data.mutation_method = MutationMethod(self.mutation_probability_selected_option.get())
         binary_chromosomes_configuration_data.cross_method = CrossoverMethod(self.cross_method_selected_option.get())
         binary_chromosomes_configuration_data.selection_method = SelectionMethod(self.selection_method_selected_option.get())
-        binary_chromosomes_configuration_data.inversion_probability = self.inversion_probability_entry.get()
-        binary_chromosomes_configuration_data.mutation_probability = self.mutation_probability_entry.get()
-        binary_chromosomes_configuration_data.cross_probability = self.cross_probability_entry.get()
-        binary_chromosomes_configuration_data.elite_strategy = self.elite_strategy_entry.get()
-        binary_chromosomes_configuration_data.population = self.population_entry.get()
-        binary_chromosomes_configuration_data.end_of_the_range = self.end_of_the_range_entry.get()
-        binary_chromosomes_configuration_data.begin_of_the_range = self.begin_of_the_range_entry.get()
-        binary_chromosomes_configuration_data.epochs = self.epochs_entry.get()
+        binary_chromosomes_configuration_data.inversion_probability = float(self.inversion_probability_entry.get())
+        binary_chromosomes_configuration_data.mutation_probability = float(self.mutation_probability_entry.get())
+        binary_chromosomes_configuration_data.cross_probability = float(self.cross_probability_entry.get())
+        binary_chromosomes_configuration_data.elite_strategy = float(self.elite_strategy_entry.get())
+        binary_chromosomes_configuration_data.population = int(self.population_entry.get())
+        binary_chromosomes_configuration_data.end_of_the_range = int(self.end_of_the_range_entry.get())
+        binary_chromosomes_configuration_data.begin_of_the_range = int(self.begin_of_the_range_entry.get())
+        binary_chromosomes_configuration_data.epochs = int(self.epochs_entry.get())
         binary_chromosomes_configuration_data.optimization_type = self.optimization_type
-        binary_chromosomes_configuration_data.function_to_calculate = self.function_to_calculate_selected_option.get()
-        binary_chromosomes_configuration_data.percentage_the_best_to_select = self.percentage_the_best_to_select_entry.get()
-        binary_chromosomes_configuration_data.block_size = self.block_size_entry.get()
-        binary_chromosomes_configuration_data.probability_to_crossover_block = self.probability_to_crossover_block_entry.get()
-        binary_chromosomes_configuration_data.tournament_size = self.tournament_size_entry.get()
-        binary_chromosomes_configuration_data.precision = self.precision_entry.get()
-        binary_chromosomes_configuration_data.num_variable = self.num_variable_entry.get()
-        binary_chromosomes_configuration_data.probability_to_crossover_gene = self.probability_to_crossover_gene_entry.get()
+        binary_chromosomes_configuration_data.function_to_calculate = FunctionToCalculate(self.function_to_calculate_selected_option.get())
+        binary_chromosomes_configuration_data.percentage_the_best_to_select = float(self.percentage_the_best_to_select_entry.get())
+        binary_chromosomes_configuration_data.block_size = int(self.block_size_entry.get())
+        binary_chromosomes_configuration_data.probability_to_crossover_block = float(self.probability_to_crossover_block_entry.get())
+        binary_chromosomes_configuration_data.tournament_size = int(self.tournament_size_entry.get())
+        binary_chromosomes_configuration_data.precision = float(self.precision_entry.get())
+        binary_chromosomes_configuration_data.num_variable = int(self.num_variable_entry.get())
+        binary_chromosomes_configuration_data.probability_to_crossover_gene = float(self.probability_to_crossover_gene_entry.get())
         return binary_chromosomes_configuration_data
 
     def start(self):
         self.initialization_frame()
 
+    def validate_fields(self, configuration_data):
+        if not self.input_validations.end_range_is_less_than_start_range(
+                configuration_data.end_of_the_range, configuration_data.begin_of_the_range):
+            self.validations_label.config(text="Start range must be less then end range", fg="red")
+            self.validations_label.grid(padx=3, pady=3, row=22, column=0, columnspan=2)
+            return False
+        elif not self.input_validations.validate_cec_2014_f1_function(
+                configuration_data.function_to_calculate, configuration_data.num_variable):
+            self.validations_label.config(text="F12014 problem is only supported ndim in [10, 20, 30, 50, 100]!",
+                                          fg="red")
+            self.validations_label.grid(padx=3, pady=3, row=22, column=0, columnspan=2)
+            return False
+        else:
+            self.validations_label.config(text="")
+            self.validations_label.grid_forget()
+            return True
+
     def run_generic_algorithm(self):
-        if not self.input_validations.check_if_required_fields_are_completed():
-            configuration_data = self._get_form_data()
+        configuration_data = self._get_form_data()
+        if (not self.input_validations.check_if_required_fields_are_completed() and
+                self.validate_fields(configuration_data)):
+
             configuration_genetic_algorithm = ConfigurationGeneticAlgorithm()
             genetic_algorithm = configuration_genetic_algorithm.configuration(configuration_data)
             (fitness_value, value_function_on_iteration, avg_on_iteration,
