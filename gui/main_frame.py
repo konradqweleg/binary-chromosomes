@@ -314,9 +314,6 @@ class MainFrame:
         if (not self.input_validations.check_if_required_fields_are_completed() and
                 self.validate_fields(configuration_data)):
 
-        if not self.input_validations.check_if_required_fields_are_completed():
-            configuration_data = self._get_form_data()
-
             configuration_genetic_algorithm = ConfigurationGeneticAlgorithm()
             genetic_algorithm = configuration_genetic_algorithm.configuration(configuration_data)
             (fitness_value, value_function_on_iteration, avg_on_iteration,

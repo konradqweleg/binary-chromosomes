@@ -63,9 +63,9 @@ class InputValidations:
 
     def validate_cec_2014_f1_function(self, function_to_calculate, num_variable):
         if (function_to_calculate == FunctionToCalculate.CEC_2014_F1 and
-                num_variable in self.allowed_num_variable_to_cec_function):
-            return True
-        return False
+                not num_variable in self.allowed_num_variable_to_cec_function):
+            return False
+        return True
 
     def _get_all_entry_fields(self):
         fields = []
