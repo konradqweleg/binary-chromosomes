@@ -146,10 +146,12 @@ class GeneticAlgorithm:
         std_dev_fitness_on_iteration = []
         value_fitness_function_on_iteration = []
         for iteration in range(self.num_iterations):
-            self.logger.info(f"Iteration {iteration + 1}/{self.num_iterations}")
+            if iteration % 100 == 0 or iteration == self.num_iterations - 1:
+                self.logger.info(f"Iteration {iteration + 1}/{self.num_iterations}")
 
             fitness_scores = self.population.evaluate(self.fitness_function)
-            self.logger.info(f"Fitness scores for the population: {fitness_scores}")
+            if iteration % 100 == 0 or iteration == self.num_iterations - 1:
+                self.logger.info(f"Fitness scores for the population: {fitness_scores}")
             self.logger.debug(f"Decoded values: {[chromosome.decode() for chromosome in self.population._chromosomes]}")
 
             self.update_best_chromosome(fitness_scores)

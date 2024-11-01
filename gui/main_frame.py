@@ -1,8 +1,9 @@
 import os
 import time
+from pathlib import Path
 from tkinter import Tk, Label, Entry, OptionMenu, StringVar, Button, Toplevel
 from tkinter.ttk import Radiobutton
-
+import shutil
 import numpy as np
 
 from app.configuration.configuration_genetic_algorithm import ConfigurationGeneticAlgorithm
@@ -251,9 +252,35 @@ class MainFrame:
     def start(self):
         self.initialization_frame()
 
+    def save_parameters_to_file(self):
+        parameters_file_path = Path(f'results/{self.image_folder_number}/parameters.txt')
+
+        with parameters_file_path.open('w') as file:
+            file.write(f"Mutation Method: {self.mutation_probability_selected_option.get()}\n")
+            file.write(f"Crossover Method: {self.cross_method_selected_option.get()}\n")
+            file.write(f"Selection Method: {self.selection_method_selected_option.get()}\n")
+            file.write(f"Inversion Probability: {self.inversion_probability_entry.get()}\n")
+            file.write(f"Mutation Probability: {self.mutation_probability_entry.get()}\n")
+            file.write(f"Crossover Probability: {self.cross_probability_entry.get()}\n")
+            file.write(f"Elite Strategy: {self.elite_strategy_entry.get()}\n")
+            file.write(f"Population: {self.population_entry.get()}\n")
+            file.write(f"End of the Range: {self.end_of_the_range_entry.get()}\n")
+            file.write(f"Begin of the Range: {self.begin_of_the_range_entry.get()}\n")
+            file.write(f"Epochs: {self.epochs_entry.get()}\n")
+            file.write(f"Optimization Type: {self.optimization_type}\n")
+            file.write(f"Function to Calculate: {self.function_to_calculate_selected_option.get()}\n")
+            file.write(f"Percentage of the Best to Select: {self.percentage_the_best_to_select_entry.get()}\n")
+            file.write(f"Block Size: {self.block_size_entry.get()}\n")
+            file.write(f"Probability to Crossover Block: {self.probability_to_crossover_block_entry.get()}\n")
+            file.write(f"Tournament Size: {self.tournament_size_entry.get()}\n")
+            file.write(f"Precision: {self.precision_entry.get()}\n")
+            file.write(f"Number of Variables: {self.num_variable_entry.get()}\n")
+            file.write(f"Probability to Crossover Gene: {self.probability_to_crossover_gene_entry.get()}\n")
+
     def run_generic_algorithm(self):
         if not self.input_validations.check_if_required_fields_are_completed():
             configuration_data = self._get_form_data()
+
             configuration_genetic_algorithm = ConfigurationGeneticAlgorithm()
             genetic_algorithm = configuration_genetic_algorithm.configuration(configuration_data)
             (fitness_value, value_function_on_iteration, avg_on_iteration,
@@ -263,14 +290,28 @@ class MainFrame:
             os.makedirs(folder_path, exist_ok=True)
 
 
-            self.save_results_to_file('algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration,best_chromosome_value)
+            self.save_results_to_file('algorithm_results.csv', value_function_on_iteration, avg_on_iteration, std_on_iteration)
             self.draw_function_value_over_iterations(value_function_on_iteration)
-           # self.draw_function_value_over_iterations(fitness_value)
+
             last_value = value_function_on_iteration[-1]
             self.plot_avg_fitness_over_iteration(avg_on_iteration)
             self.plot_std_dev_fitness_over_iteration(std_on_iteration)
+            self.save_parameters_to_file()
+            self.save_final_results_to_file(time_calculation, best_chromosome_value, last_value,(self.image_folder_number))
             self.image_folder_number += 1
-            self.open_new_window(time_calculation, best_chromosome_value, last_value)
+            self.open_new_window(time_calculation, best_chromosome_value, last_value,(self.image_folder_number-1))
+
+    def save_final_results_to_file(self, time_calculation, best_chromosome_value, last_value, image_folder_number):
+        file_path = Path(f'results/{image_folder_number}/final_results.txt')
+
+        with file_path.open('w') as file:
+            file.write(f'Time Calculation: {time_calculation}\n')
+            file.write(f'Best Chromosome Value: {best_chromosome_value}\n')
+            file.write(f'Last Value: {last_value}\n')
+
+
+
+
 
     def downsample_data(self, data, max_points=500):
         if len(data) > max_points:
@@ -290,7 +331,7 @@ class MainFrame:
         plt.savefig(f'results/{self.image_folder_number}/fitness_value_over_iterations.png')
         plt.savefig('results/fitness_value_over_iterations.png')
 
-        plt.show()
+        #plt.show()
 
     def plot_avg_fitness_over_iteration(self, avg_fitness_on_iteration):
         avg_fitness_on_iteration, indices = self.downsample_data(avg_fitness_on_iteration)
@@ -304,7 +345,7 @@ class MainFrame:
         plt.grid(True)
         plt.savefig(f'results/{self.image_folder_number}/avg_fitness_over_iterations.png')
         plt.savefig('results/avg_fitness_over_iterations.png')
-        plt.show()
+        #plt.show()
 
     def plot_std_dev_fitness_over_iteration(self, std_dev_fitness_on_iteration):
         std_dev_fitness_on_iteration, indices = self.downsample_data(std_dev_fitness_on_iteration)
@@ -320,21 +361,23 @@ class MainFrame:
         os.makedirs(folder_path, exist_ok=True)
         plt.savefig(f'results/{self.image_folder_number}/std_dev_fitness_over_iterations.png')
         plt.savefig('results/std_dev_fitness_over_iterations.png')
-        plt.show()
+       # plt.show()
 
     def save_results_to_file(self, filename, value_function_on_iteration, avg_fitness_on_iteration,
-                             std_dev_fitness_on_iteration,best_chromosome_value):
+                             std_dev_fitness_on_iteration):
 
         with open(f'results/{self.image_folder_number}/{filename}', 'w') as file:
             file.write("Iteration,Best Fitness,Average Fitness,Standard Deviation\n")
             for i in range(len(value_function_on_iteration)):
                 file.write(
                     f"{i + 1},{value_function_on_iteration[i]},{avg_fitness_on_iteration[i]},{std_dev_fitness_on_iteration[i]}\n")
-            file.write(f"Best chromosome value: {best_chromosome_value}")
 
-    def open_new_window(self, result_time, best_chromosome_value,last_value):
+
+
+
+    def open_new_window(self, result_time, best_chromosome_value,last_value,number_runs_program):
         new_window = Toplevel(self.root)
-        ImageExplorer(new_window, result_time, best_chromosome_value,last_value)
+        ImageExplorer(new_window, result_time, best_chromosome_value,last_value,number_runs_program)
 
 fra = MainFrame()
 fra.start()
