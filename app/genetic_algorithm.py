@@ -87,10 +87,13 @@ class GeneticAlgorithm:
         self.population = Population(length_chromosome_calculator, population_size, lower_bounds, upper_bounds,
                                      num_variables)
         self.elitism_rate = elitism_rate
-        self.best_chromosome = float('inf')
-        self.best_fitness = float('inf')
+
+        self.best_chromosome = float('inf') if optimization_type == 'minimization' else float('-inf')
+        self.best_fitness = float('inf') if optimization_type == 'minimization' else float('-inf')
         self.the_best_chromosome_last_population = None
-        self.the_best_fitness_last_population = float('inf')
+        self.the_best_fitness_last_population = float('inf') if optimization_type == 'minimization' else float('-inf')
+
+
         self.other_operations = other_operation
         self.optimization_type = optimization_type
         self.logger = logging.getLogger(__name__)
@@ -127,14 +130,16 @@ class GeneticAlgorithm:
 
     def update_best_chromosome(self, fitness_scores):
         for i, score in enumerate(fitness_scores):
-            if score < self.best_fitness:
+            if (self.optimization_type == 'minimization' and score < self.best_fitness) or \
+                    (self.optimization_type == 'maximization' and score > self.best_fitness):
                 self.logger.debug(f"Updating best chromosome with score: {score}")
                 self.best_fitness = score
                 self.best_chromosome = copy.deepcopy(self.population._chromosomes[i])
 
-    def find_best_chromosome_in_last_iteration(self, fittness_scores):
-        for i, score in enumerate(fittness_scores):
-            if score < self.the_best_fitness_last_population:
+    def find_best_chromosome_in_last_iteration(self, fitness_scores):
+        for i, score in enumerate(fitness_scores):
+            if (self.optimization_type == 'minimization' and score < self.the_best_fitness_last_population) or \
+                    (self.optimization_type == 'maximization' and score > self.the_best_fitness_last_population):
                 self.logger.debug(f"Updating best chromosome in last population with score: {score}")
                 self.the_best_fitness_last_population = score
                 self.the_best_chromosome_last_population = copy.deepcopy(self.population._chromosomes[i])
